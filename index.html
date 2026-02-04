@@ -2,31 +2,31 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Ameriwest Law Group</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ameriwest Law Group</title>
 
   <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 
-  <!-- CSS (IMPORTANT: your repo file is styles.css) -->
   <link rel="stylesheet" href="./styles.css" />
 </head>
-
 <body>
 
 <header class="topbar">
   <div class="topbar-inner">
-    <div class="brand">
-      <span class="dot" aria-hidden="true"></span>
+    <a class="brand" href="#top">
+      <span class="brand-dot" aria-hidden="true"></span>
       <span class="brand-text">AMERIWEST LAW GROUP</span>
-    </div>
+    </a>
 
     <nav class="nav">
-      <a href="#services">SERVICES</a>
-      <a href="#process">PROCESS</a>
-      <a href="#results">RESULTS</a>
-      <a href="#contact">CONTACT</a>
-      <a class="btn-book" href="#contact">BOOK</a>
+      <a href="#services">Services</a>
+      <a href="#process">Process</a>
+      <a href="#results">Results</a>
+      <a href="#contact">Contact</a>
+      <a class="nav-book" href="#contact">BOOK</a>
     </nav>
   </div>
 </header>
@@ -34,83 +34,140 @@
 <main id="top">
 
   <!-- HERO -->
-  <section class="hero" aria-label="Hero">
-    <div class="hero-bg" role="img" aria-label="Ameriwest Law Group hero background"></div>
-    <div class="hero-shade"></div>
+  <section class="section hero bg-hero" aria-label="Hero">
+    <div class="bg-overlay"></div>
 
-    <div class="container hero-inner">
-      <div class="hero-copy">
-        <h1 class="hero-title">AMERIWEST<br>LAW GROUP</h1>
+    <div class="container">
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <h1 class="hero-title">
+            AMERIWEST LAW<br/>
+            GROUP
+          </h1>
 
-        <ul class="hero-bullets" aria-label="Practice areas">
-          <li><span class="txt">DEBT RELIEF &amp; NEGOTIATION</span></li>
-          <li><span class="txt">CONSUMER PROTECTION LAW</span></li>
-          <li><span class="txt">LEGAL REPRESENTATION</span></li>
-        </ul>
+          <ul class="hero-list">
+            <li>DEBT RELIEF &amp; NEGOTIATION</li>
+            <li>CONSUMER PROTECTION LAW</li>
+            <li>LEGAL REPRESENTATION</li>
+          </ul>
 
-        <p class="hero-tagline">A LEGAL EXIT. A TRUSTED PARTNER.</p>
+          <p class="hero-tagline">A LEGAL EXIT. A TRUSTED PARTNER.</p>
 
-        <a class="hero-cta" href="#contact">
-          BOOK A FREE CONSULTATION <span class="arrow" aria-hidden="true">→</span>
-        </a>
+          <a class="hero-cta" href="#contact">BOOK A FREE CONSULTATION →</a>
 
-        <p class="hero-meta">Mandarin / Cantonese / English · California-based · Nationwide Service</p>
+          <p class="hero-meta">
+            Mandarin / Cantonese / English · California-based · Nationwide Service
+          </p>
+        </div>
       </div>
     </div>
   </section>
 
   <!-- TRUST -->
-  <section class="section trust" aria-label="Trust">
-    <div class="section-bg section-bg--trust" role="img" aria-label="Trust background"></div>
-    <div class="section-shade"></div>
+  <section class="section bg-trust" aria-label="Trust">
+    <div class="bg-overlay soft"></div>
 
-    <div class="container section-inner">
-      <h2 class="section-title">Why Clients Trust Us</h2>
-      <p class="section-desc">Attorney-led negotiation. Transparent process. No hidden fees.</p>
+    <div class="container">
+      <div class="block">
+        <h2 class="h2">Why Clients Trust Us</h2>
+        <p class="p">
+          Attorney-led negotiation. Transparent process. No hidden fees.
+        </p>
+
+        <div class="cards">
+          <div class="card">
+            <div class="card-title">Attorney-Led</div>
+            <div class="card-text">Licensed attorneys lead negotiation and communications.</div>
+          </div>
+          <div class="card">
+            <div class="card-title">Transparent</div>
+            <div class="card-text">Clear steps, documented progress, straightforward fees.</div>
+          </div>
+          <div class="card">
+            <div class="card-title">Compliance</div>
+            <div class="card-text">Regulated, credible, and risk-aware handling from start to finish.</div>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
   <!-- SERVICES -->
-  <section id="services" class="section services" aria-label="Services">
-    <div class="section-bg section-bg--services" role="img" aria-label="Services background"></div>
-    <div class="section-shade"></div>
+  <section id="services" class="section bg-services" aria-label="Services">
+    <div class="bg-overlay soft"></div>
 
-    <div class="container section-inner">
-      <h2 class="section-title">Our Services</h2>
-      <p class="section-desc">Strategic debt resolution and consumer protection.</p>
+    <div class="container">
+      <div class="block">
+        <h2 class="h2">Our Services</h2>
+        <p class="p">Strategic debt resolution and consumer protection.</p>
+
+        <div class="list-grid">
+          <div class="item">
+            <div class="item-title">Debt Relief & Negotiation</div>
+            <div class="item-text">Structured settlement strategy with creditor communication support.</div>
+          </div>
+          <div class="item">
+            <div class="item-title">Consumer Protection</div>
+            <div class="item-text">Dispute handling, unfair collection defense, compliance-forward approach.</div>
+          </div>
+          <div class="item">
+            <div class="item-title">Legal Representation</div>
+            <div class="item-text">Professional guidance through documentation, negotiation, and resolution.</div>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
   <!-- PROCESS -->
-  <section id="process" class="section process" aria-label="Process">
-    <div class="section-bg section-bg--process" role="img" aria-label="Process background"></div>
-    <div class="section-shade"></div>
+  <section id="process" class="section bg-process" aria-label="Process">
+    <div class="bg-overlay soft"></div>
 
-    <div class="container section-inner">
-      <h2 class="section-title">Our Process</h2>
-      <p class="section-desc">Clear steps. Documented progress. Regulated compliance.</p>
+    <div class="container">
+      <div class="block">
+        <h2 class="h2">Our Process</h2>
+        <p class="p">Clear steps. Documented progress. Regulated compliance.</p>
+
+        <ol class="steps">
+          <li><span class="step-n">01</span><span class="step-t">Intake & Analysis</span><span class="step-d">We review the facts, documents, and risk profile.</span></li>
+          <li><span class="step-n">02</span><span class="step-t">Strategy</span><span class="step-d">We map options, timelines, and best outcomes.</span></li>
+          <li><span class="step-n">03</span><span class="step-t">Negotiation</span><span class="step-d">We lead creditor communications and settlement progress.</span></li>
+          <li><span class="step-n">04</span><span class="step-t">Resolution</span><span class="step-d">We confirm terms, documentation, and next-step protection.</span></li>
+        </ol>
+      </div>
     </div>
   </section>
 
-  <!-- RESULTS -->
-  <section id="results" class="section results" aria-label="Results">
-    <div class="section-bg section-bg--cta" role="img" aria-label="Results background"></div>
-    <div class="section-shade"></div>
+  <!-- RESULTS (placeholder) -->
+  <section id="results" class="section bg-services" aria-label="Results">
+    <div class="bg-overlay soft"></div>
 
-    <div class="container section-inner">
-      <h2 class="section-title">Results</h2>
-      <p class="section-desc">Practical outcomes, guided by compliance and careful documentation.</p>
+    <div class="container">
+      <div class="block">
+        <h2 class="h2">Results</h2>
+        <p class="p">Case outcomes vary. We focus on structured strategy, compliance, and clarity.</p>
+      </div>
     </div>
   </section>
 
-  <!-- CONTACT / CTA -->
-  <section id="contact" class="section cta" aria-label="Contact">
-    <div class="section-bg section-bg--cta" role="img" aria-label="CTA background"></div>
-    <div class="section-shade"></div>
+  <!-- CTA / CONTACT -->
+  <section id="contact" class="section bg-cta" aria-label="Contact">
+    <div class="bg-overlay"></div>
 
-    <div class="container section-inner">
-      <h2 class="section-title">Start With Confidence</h2>
-      <a class="btn-primary" href="#">Book Your Consultation</a>
+    <div class="container">
+      <div class="cta-box">
+        <h2 class="h2">Start With Confidence</h2>
+        <p class="p">Request a consultation. We’ll respond with next steps and required documents.</p>
+
+        <div class="cta-actions">
+          <a class="btn-primary" href="mailto:info@ameriwestlawgroup.com">Email Us</a>
+          <a class="btn-ghost" href="#top">Back to Top</a>
+        </div>
+
+        <div class="fineprint">
+          Serving clients in English / 中文 / 廣東話 · California-based · Nationwide support
+        </div>
+      </div>
     </div>
   </section>
 
