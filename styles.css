@@ -1,14 +1,4 @@
-/* =========================
-   ROOT VARIABLES
-========================= */
-:root {
-  --gold: #d6b36a;
-  --bg-dark: #05070a;
-}
-
-/* =========================
-   RESET
-========================= */
+/* RESET */
 * {
   margin: 0;
   padding: 0;
@@ -16,168 +6,133 @@
 }
 
 body {
-  background: var(--bg-dark);
-  color: #eee;
   font-family: 'Inter', sans-serif;
-  line-height: 1.6;
+  background: #000;
+  color: #eee;
 }
 
-/* =========================
-   TOP BAR
-========================= */
+/* TOP BAR */
 .topbar {
   position: fixed;
   top: 0;
   width: 100%;
-  padding: 16px 48px;
+  padding: 16px 40px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: rgba(0,0,0,0.55);
-  backdrop-filter: blur(8px);
-  z-index: 100;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(10px);
+  z-index: 10;
 }
 
-.topbar a {
-  color: #ccc;
+.logo {
+  font-family: 'Cinzel', serif;
+  color: #d6b46a;
+  letter-spacing: 1px;
+}
+
+nav a {
   margin-left: 24px;
+  color: #ccc;
   text-decoration: none;
   font-size: 14px;
 }
 
 .btn-book {
-  border: 1px solid var(--gold);
   padding: 6px 14px;
+  border: 1px solid #d6b46a;
   border-radius: 20px;
-  color: var(--gold);
+  color: #d6b46a;
 }
 
-/* =========================
-   SECTIONS
-========================= */
-.section {
+/* SECTIONS */
+section {
   position: relative;
   min-height: 100vh;
   display: flex;
   align-items: center;
-  padding: 120px 80px;
-  overflow: hidden;
 }
 
-.section .bg {
+.overlay {
   position: absolute;
   inset: 0;
-  background-size: cover;
-  background-position: center;
-  z-index: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(0,0,0,0.85),
+    rgba(0,0,0,0.3)
+  );
 }
 
-.section .bg::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(circle at 20% 30%, rgba(214,179,106,0.08), transparent 40%),
-    linear-gradient(to right, rgba(5,7,10,0.92), rgba(5,7,10,0.65));
-}
-
-/* =========================
-   BACKGROUNDS (GitHub Pages SAFE)
-========================= */
-.hero-bg {
-  background-image: url("/ameriwest-law-group/assets/img/hero-bg.png");
-}
-
-.trust-bg {
-  background-image: url("/ameriwest-law-group/assets/img/trust-bg.jpg");
-}
-
-.services-bg {
-  background-image: url("/ameriwest-law-group/assets/img/services-bg.jpg");
-}
-
-.process-bg {
-  background-image: url("/ameriwest-law-group/assets/img/process-bg.jpg");
-}
-
-.cta-bg {
-  background-image: url("/ameriwest-law-group/assets/img/cta-bg.jpg");
-}
-
-/* =========================
-   CONTENT
-========================= */
 .content {
   position: relative;
-  z-index: 1;
-  max-width: 700px;
+  z-index: 2;
+  padding: 120px 80px;
+  max-width: 800px;
 }
 
-.content.narrow {
-  max-width: 520px;
+/* HERO */
+.hero {
+  background: url("Asset/img/hero-bg.png") center / cover no-repeat;
 }
 
-h1, h2 {
+.hero h1 {
   font-family: 'Cinzel', serif;
-  color: var(--gold);
-  letter-spacing: 0.08em;
-}
-
-h1 {
   font-size: 64px;
-  margin-bottom: 32px;
-}
-
-h2 {
-  font-size: 40px;
-  margin-bottom: 20px;
-}
-
-.services-list {
-  list-style: none;
+  color: #e0c27c;
   margin-bottom: 24px;
 }
 
-.services-list li {
+.hero ul {
+  list-style: none;
+  margin-bottom: 20px;
+}
+
+.hero li {
   margin-bottom: 8px;
 }
 
 .tagline {
-  margin: 24px 0;
-  color: var(--gold);
+  margin-top: 20px;
+  color: #d6b46a;
+  letter-spacing: 1px;
 }
 
-.meta {
+.cta {
+  display: inline-block;
+  margin-top: 24px;
+  color: #d6b46a;
+  text-decoration: none;
+  border-bottom: 1px solid #d6b46a;
+}
+
+.lang {
   margin-top: 20px;
   font-size: 13px;
   color: #aaa;
 }
 
-/* =========================
-   CTA
-========================= */
-.cta {
-  display: inline-block;
-  margin-top: 20px;
-  color: var(--gold);
-  border-bottom: 1px solid var(--gold);
-  padding-bottom: 4px;
-  text-decoration: none;
+/* TRUST */
+.trust {
+  background: url("Asset/img/trust-bg.jpg") center / cover no-repeat;
 }
 
-.cta.big {
+/* SERVICES */
+.services {
+  background: url("Asset/img/services-bg.jpg") center / cover no-repeat;
+}
+
+/* PROCESS */
+.process {
+  background: url("Asset/img/process-bg.jpg") center / cover no-repeat;
+}
+
+/* CTA */
+.cta-section {
+  background: url("Asset/img/cta-bg.jpg") center / cover no-repeat;
+  text-align: center;
+}
+
+.cta.large {
   font-size: 18px;
-}
-
-/* =========================
-   RESPONSIVE
-========================= */
-@media (max-width: 768px) {
-  .section {
-    padding: 100px 32px;
-  }
-
-  h1 {
-    font-size: 42px;
-  }
+  margin-top: 40px;
 }
