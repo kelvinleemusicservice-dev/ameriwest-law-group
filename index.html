@@ -2,176 +2,86 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Ameriwest Law Group</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Noto+Serif+TC:wght@400;600&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="./styles.css" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
 <header class="topbar">
-  <div class="topbar-inner">
-    <a class="brand" href="#top">
-      <span class="brand-dot" aria-hidden="true"></span>
-      <span class="brand-text">AMERIWEST LAW GROUP</span>
-    </a>
-
-    <nav class="nav">
-      <a href="#services">Services</a>
-      <a href="#process">Process</a>
-      <a href="#results">Results</a>
-      <a href="#contact">Contact</a>
-      <a class="nav-book" href="#contact">BOOK</a>
-    </nav>
-  </div>
+  <div class="brand">AMERIWEST LAW GROUP</div>
+  <nav>
+    <a href="#services">Services</a>
+    <a href="#trust">Credentials</a>
+    <a href="#contact" class="btn">BOOK</a>
+  </nav>
 </header>
 
-<main id="top">
+<section class="hero">
+  <div class="hero-overlay"></div>
 
-  <!-- HERO -->
-  <section class="section hero bg-hero" aria-label="Hero">
-    <div class="bg-overlay"></div>
+  <div class="hero-content">
+    <h1>
+      AMERIWEST LAW GROUP<br>
+      <span class="zh">美西律師事務所</span>
+    </h1>
 
-    <div class="container">
-      <div class="hero-grid">
-        <div class="hero-copy">
-          <h1 class="hero-title">
-            AMERIWEST LAW<br/>
-            GROUP
-          </h1>
+    <ul class="services-list">
+      <li>
+        Debt Relief & Legal Debt Negotiation<br>
+        <span>債務協商與法律談判</span>
+      </li>
+      <li>
+        Consumer Protection Law<br>
+        <span>消費者權益保護法</span>
+      </li>
+      <li>
+        Legal Representation<br>
+        <span>法律代理與文件處理</span>
+      </li>
+    </ul>
 
-          <ul class="hero-list">
-            <li>DEBT RELIEF &amp; NEGOTIATION</li>
-            <li>CONSUMER PROTECTION LAW</li>
-            <li>LEGAL REPRESENTATION</li>
-          </ul>
+    <p class="tagline">A Legal Exit. A Trusted Partner.</p>
 
-          <p class="hero-tagline">A LEGAL EXIT. A TRUSTED PARTNER.</p>
+    <a href="#contact" class="cta">Book a Free Consultation →</a>
+  </div>
+</section>
 
-          <a class="hero-cta" href="#contact">BOOK A FREE CONSULTATION →</a>
+<section id="trust" class="trust">
+  <h2>Why Clients Trust Us</h2>
 
-          <p class="hero-meta">
-            Mandarin / Cantonese / English · California-based · Nationwide Service
-          </p>
-        </div>
-      </div>
+  <div class="trust-grid">
+    <div>
+      <h3>Attorney-Led Practice</h3>
+      <p>持牌律師主導</p>
     </div>
-  </section>
-
-  <!-- TRUST -->
-  <section class="section bg-trust" aria-label="Trust">
-    <div class="bg-overlay soft"></div>
-
-    <div class="container">
-      <div class="block">
-        <h2 class="h2">Why Clients Trust Us</h2>
-        <p class="p">
-          Attorney-led negotiation. Transparent process. No hidden fees.
-        </p>
-
-        <div class="cards">
-          <div class="card">
-            <div class="card-title">Attorney-Led</div>
-            <div class="card-text">Licensed attorneys lead negotiation and communications.</div>
-          </div>
-          <div class="card">
-            <div class="card-title">Transparent</div>
-            <div class="card-text">Clear steps, documented progress, straightforward fees.</div>
-          </div>
-          <div class="card">
-            <div class="card-title">Compliance</div>
-            <div class="card-text">Regulated, credible, and risk-aware handling from start to finish.</div>
-          </div>
-        </div>
-      </div>
+    <div>
+      <h3>Transparent Process</h3>
+      <p>流程透明｜文件完整</p>
     </div>
-  </section>
-
-  <!-- SERVICES -->
-  <section id="services" class="section bg-services" aria-label="Services">
-    <div class="bg-overlay soft"></div>
-
-    <div class="container">
-      <div class="block">
-        <h2 class="h2">Our Services</h2>
-        <p class="p">Strategic debt resolution and consumer protection.</p>
-
-        <div class="list-grid">
-          <div class="item">
-            <div class="item-title">Debt Relief & Negotiation</div>
-            <div class="item-text">Structured settlement strategy with creditor communication support.</div>
-          </div>
-          <div class="item">
-            <div class="item-title">Consumer Protection</div>
-            <div class="item-text">Dispute handling, unfair collection defense, compliance-forward approach.</div>
-          </div>
-          <div class="item">
-            <div class="item-title">Legal Representation</div>
-            <div class="item-text">Professional guidance through documentation, negotiation, and resolution.</div>
-          </div>
-        </div>
-      </div>
+    <div>
+      <h3>No Hidden Fees</h3>
+      <p>收費清晰｜無隱藏條款</p>
     </div>
-  </section>
-
-  <!-- PROCESS -->
-  <section id="process" class="section bg-process" aria-label="Process">
-    <div class="bg-overlay soft"></div>
-
-    <div class="container">
-      <div class="block">
-        <h2 class="h2">Our Process</h2>
-        <p class="p">Clear steps. Documented progress. Regulated compliance.</p>
-
-        <ol class="steps">
-          <li><span class="step-n">01</span><span class="step-t">Intake & Analysis</span><span class="step-d">We review the facts, documents, and risk profile.</span></li>
-          <li><span class="step-n">02</span><span class="step-t">Strategy</span><span class="step-d">We map options, timelines, and best outcomes.</span></li>
-          <li><span class="step-n">03</span><span class="step-t">Negotiation</span><span class="step-d">We lead creditor communications and settlement progress.</span></li>
-          <li><span class="step-n">04</span><span class="step-t">Resolution</span><span class="step-d">We confirm terms, documentation, and next-step protection.</span></li>
-        </ol>
-      </div>
+    <div>
+      <h3>Bilingual Support</h3>
+      <p>中英雙語法律服務</p>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- RESULTS (placeholder) -->
-  <section id="results" class="section bg-services" aria-label="Results">
-    <div class="bg-overlay soft"></div>
+<section id="contact" class="contact">
+  <h2>Start With Confidence</h2>
+  <a class="cta large">Book Your Consultation</a>
+</section>
 
-    <div class="container">
-      <div class="block">
-        <h2 class="h2">Results</h2>
-        <p class="p">Case outcomes vary. We focus on structured strategy, compliance, and clarity.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- CTA / CONTACT -->
-  <section id="contact" class="section bg-cta" aria-label="Contact">
-    <div class="bg-overlay"></div>
-
-    <div class="container">
-      <div class="cta-box">
-        <h2 class="h2">Start With Confidence</h2>
-        <p class="p">Request a consultation. We’ll respond with next steps and required documents.</p>
-
-        <div class="cta-actions">
-          <a class="btn-primary" href="mailto:info@ameriwestlawgroup.com">Email Us</a>
-          <a class="btn-ghost" href="#top">Back to Top</a>
-        </div>
-
-        <div class="fineprint">
-          Serving clients in English / 中文 / 廣東話 · California-based · Nationwide support
-        </div>
-      </div>
-    </div>
-  </section>
-
-</main>
+<footer>
+  © Ameriwest Law Group · California
+</footer>
 
 </body>
 </html>
