@@ -1,87 +1,645 @@
-<!DOCTYPE html>
+<!--
+Exit in 10 — GitHub Pages / Single-file HTML game (no build tools)
+
+How to run locally:
+  1) Save as index.html
+  2) Open in browser (double-click) OR use a local server.
+
+How to run on GitHub Pages:
+  1) Create a repo (e.g., exit-in-10)
+  2) Add this file as index.html at repo root
+  3) GitHub → Settings → Pages → Deploy from branch → main / (root)
+  4) Visit the Pages URL
+
+This is a simple MVP (turn-based, 10 years). Extend freely.
+-->
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Ameriwest Law Group</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Noto+Serif+TC:wght@400;600&display=swap" rel="stylesheet">
-
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Exit in 10 — Life Allocation Simulator</title>
+  <style>
+    :root { color-scheme: light dark; }
+    body { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 0; }
+    .wrap { max-width: 980px; margin: 0 auto; padding: 18px; }
+    h1 { margin: 6px 0 6px; font-size: 22px; }
+    .sub { opacity: .8; margin: 0 0 14px; line-height: 1.35; }
+    .grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+    @media (min-width: 900px) { .grid { grid-template-columns: 1.1fr .9fr; } }
+    .card { border: 1px solid rgba(127,127,127,.25); border-radius: 12px; padding: 14px; background: rgba(127,127,127,.05); }
+    .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .kpi { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; }
+    @media (min-width: 650px) { .kpi { grid-template-columns: repeat(4, minmax(0,1fr)); } }
+    .k { font-size: 12px; opacity: .75; }
+    .v { font-size: 16px; font-weight: 700; }
+    .bar { height: 10px; border-radius: 999px; background: rgba(127,127,127,.25); overflow: hidden; width: 220px; }
+    .bar > div { height: 100%; background: rgba(80,180,120,.8); width: 50%; }
+    .bar.red > div { background: rgba(220,90,90,.85); }
+    label { font-size: 12px; opacity: .85; display: block; margin-bottom: 4px; }
+    input[type="number"], input[type="range"] { width: 100%; }
+    input[type="number"] { padding: 8px 10px; border-radius: 10px; border: 1px solid rgba(127,127,127,.35); background: transparent; }
+    .two { display: grid; grid-template-columns: 1fr; gap: 10px; }
+    @media (min-width: 650px) { .two { grid-template-columns: 1fr 1fr; } }
+    button { padding: 10px 12px; border-radius: 12px; border: 1px solid rgba(127,127,127,.35); background: rgba(127,127,127,.12); cursor: pointer; font-weight: 700; }
+    button.primary { background: rgba(90,160,240,.25); }
+    button:disabled { opacity: .5; cursor: not-allowed; }
+    .log { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; font-size: 12px; white-space: pre-wrap; line-height: 1.35; }
+    .pill { font-size: 12px; border: 1px solid rgba(127,127,127,.35); padding: 4px 8px; border-radius: 999px; opacity: .85; }
+    .muted { opacity: .75; }
+    .danger { color: rgb(220,90,90); }
+    .good { color: rgb(80,180,120); }
+    .sep { height: 1px; background: rgba(127,127,127,.25); margin: 10px 0; }
+  </style>
 </head>
 <body>
+  <div class="wrap">
+    <h1>Exit in 10 — Life Allocation Simulator</h1>
+    <p class="sub">
+      10-year turn-based sim: build <b>Regulated Platform</b> + <b>Creative IP</b>, invest in <b>Stocks</b>, manage <b>Burnout</b>.
+      Win if <b>Passive Income ≥ Expenses</b> by Year 10.
+    </p>
 
-<header class="topbar">
-  <div class="brand">AMERIWEST LAW GROUP</div>
-  <nav>
-    <a href="#services">Services</a>
-    <a href="#trust">Credentials</a>
-    <a href="#contact" class="btn">BOOK</a>
-  </nav>
-</header>
+    <div class="grid">
+      <div class="card">
+        <div class="row" style="justify-content:space-between;">
+          <div class="row">
+            <span class="pill" id="yearPill">Year 1/10</span>
+            <span class="pill" id="statusPill">Playing</span>
+          </div>
+          <div class="row">
+            <button id="btnReset">Reset</button>
+            <button class="primary" id="btnNext">Next Year ▶</button>
+          </div>
+        </div>
 
-<section class="hero">
-  <div class="hero-overlay"></div>
+        <div class="sep"></div>
 
-  <div class="hero-content">
-    <h1>
-      AMERIWEST LAW GROUP<br>
-      <span class="zh">美西律師事務所</span>
-    </h1>
+        <div class="kpi">
+          <div>
+            <div class="k">Cash</div>
+            <div class="v" id="cashV">$0</div>
+          </div>
+          <div>
+            <div class="k">Yearly Expenses</div>
+            <div class="v" id="expV">$0</div>
+          </div>
+          <div>
+            <div class="k">Active Cashflow (yr)</div>
+            <div class="v" id="activeV">$0</div>
+          </div>
+          <div>
+            <div class="k">Passive Income (yr)</div>
+            <div class="v" id="passiveV">$0</div>
+          </div>
+        </div>
 
-    <ul class="services-list">
-      <li>
-        Debt Relief & Legal Debt Negotiation<br>
-        <span>債務協商與法律談判</span>
-      </li>
-      <li>
-        Consumer Protection Law<br>
-        <span>消費者權益保護法</span>
-      </li>
-      <li>
-        Legal Representation<br>
-        <span>法律代理與文件處理</span>
-      </li>
-    </ul>
+        <div class="sep"></div>
 
-    <p class="tagline">A Legal Exit. A Trusted Partner.</p>
+        <div class="row">
+          <div>
+            <div class="k">Burnout</div>
+            <div class="row">
+              <div class="bar red"><div id="burnBar"></div></div>
+              <span class="pill" id="burnV">0/100</span>
+            </div>
+          </div>
+          <div>
+            <div class="k">Health</div>
+            <div class="row">
+              <div class="bar"><div id="healthBar"></div></div>
+              <span class="pill" id="healthV">0/100</span>
+            </div>
+          </div>
+          <div>
+            <div class="k">Stocks Balance</div>
+            <div class="v" id="stocksV">$0</div>
+            <div class="muted" id="stocksR">Return: 0%</div>
+          </div>
+        </div>
 
-    <a href="#contact" class="cta">Book a Free Consultation →</a>
+        <div class="sep"></div>
+
+        <div class="two">
+          <div class="card">
+            <div class="row" style="justify-content:space-between;">
+              <b>Regulated Platform</b>
+              <span class="pill" id="rpMeta">stage 0 • q 0 • risk 0</span>
+            </div>
+            <div class="row">
+              <div>
+                <div class="k">Cashflow /yr</div>
+                <div class="v" id="rpCF">$0</div>
+              </div>
+              <div>
+                <div class="k">Passive /yr</div>
+                <div class="v" id="rpP">$0</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="row" style="justify-content:space-between;">
+              <b>Creative IP</b>
+              <span class="pill" id="ciMeta">stage 0 • q 0 • risk 0</span>
+            </div>
+            <div class="row">
+              <div>
+                <div class="k">Cashflow /yr</div>
+                <div class="v" id="ciCF">$0</div>
+              </div>
+              <div>
+                <div class="k">Passive /yr</div>
+                <div class="v" id="ciP">$0</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sep"></div>
+
+        <div class="card">
+          <b>Decisions (per year)</b>
+          <p class="muted" style="margin:6px 0 10px;">
+            Allocate <b>Energy (100)</b> + <b>Cash investments</b>. More SOP/automation → more passive, less burnout.
+          </p>
+
+          <div class="two">
+            <div>
+              <label>Energy → Regulated Platform: <span id="eRegLbl">55</span></label>
+              <input id="eReg" type="range" min="0" max="100" value="55" />
+            </div>
+            <div>
+              <label>Energy → Creative IP: <span id="eCreLbl">30</span></label>
+              <input id="eCre" type="range" min="0" max="100" value="30" />
+            </div>
+          </div>
+
+          <div class="two" style="margin-top:10px;">
+            <div>
+              <label>Cash invest → Regulated (keep a $5k buffer)</label>
+              <input id="cReg" type="number" min="0" step="1000" value="15000" />
+            </div>
+            <div>
+              <label>Cash invest → Creative</label>
+              <input id="cCre" type="number" min="0" step="1000" value="8000" />
+            </div>
+          </div>
+
+          <div class="two" style="margin-top:10px;">
+            <div>
+              <label>Cash invest → Stocks</label>
+              <input id="cStk" type="number" min="0" step="1000" value="7000" />
+            </div>
+            <div>
+              <label>Optional: Sell Regulated equity (Year 4+)</label>
+              <div class="row">
+                <button id="sell0" class="pill">0%</button>
+                <button id="sell10" class="pill">10%</button>
+                <button id="sell20" class="pill">20%</button>
+                <button id="sell30" class="pill">30%</button>
+                <span class="muted" id="sellNote">Not available yet</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="sep"></div>
+          <div class="row" style="justify-content:space-between;">
+            <span class="muted" id="guardNote"></span>
+            <button class="primary" id="btnApply">Apply & Advance Year ▶</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <b>Event Log</b>
+        <div class="sep"></div>
+        <div class="log" id="log"></div>
+      </div>
+    </div>
   </div>
-</section>
 
-<section id="trust" class="trust">
-  <h2>Why Clients Trust Us</h2>
+  <script>
+    // ---------- Utilities ----------
+    const YEARS = 10;
+    const clamp = (x, lo, hi) => Math.max(lo, Math.min(hi, x));
+    const fmtMoney = (n) => "$" + Math.round(n).toLocaleString("en-US");
+    const fmtPct = (x) => Math.round(x * 100) + "%";
+    const randInt = (a, b) => Math.floor(Math.random() * (b - a + 1)) + a;
+    const randNorm = () => { // Box-Muller
+      let u = 0, v = 0;
+      while (u === 0) u = Math.random();
+      while (v === 0) v = Math.random();
+      return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+    };
 
-  <div class="trust-grid">
-    <div>
-      <h3>Attorney-Led Practice</h3>
-      <p>持牌律師主導</p>
-    </div>
-    <div>
-      <h3>Transparent Process</h3>
-      <p>流程透明｜文件完整</p>
-    </div>
-    <div>
-      <h3>No Hidden Fees</h3>
-      <p>收費清晰｜無隱藏條款</p>
-    </div>
-    <div>
-      <h3>Bilingual Support</h3>
-      <p>中英雙語法律服務</p>
-    </div>
-  </div>
-</section>
+    // ---------- Models ----------
+    function makeBusiness(name, opts = {}) {
+      return {
+        name,
+        stage: 0,
+        quality: 0,
+        cashflow: 0,
+        passive: 0,
+        risk: opts.risk ?? 20,
+        burnoutLoad: opts.burnoutLoad ?? 15,
+        sellMultLow: opts.sellMultLow ?? 2.0,
+        sellMultHigh: opts.sellMultHigh ?? 5.0
+      };
+    }
 
-<section id="contact" class="contact">
-  <h2>Start With Confidence</h2>
-  <a class="cta large">Book Your Consultation</a>
-</section>
+    function investBusiness(b, energy, cash) {
+      // quality grows with energy & cash
+      const qGain = Math.floor(0.35 * energy + 0.0006 * cash);
+      b.quality = clamp(b.quality + qGain, 0, 100);
 
-<footer>
-  © Ameriwest Law Group · California
-</footer>
+      const oldStage = b.stage;
+      if (b.quality >= 25) b.stage = Math.max(b.stage, 1);
+      if (b.quality >= 55) b.stage = Math.max(b.stage, 2);
+      if (b.quality >= 80) b.stage = Math.max(b.stage, 3);
 
+      let base = ({0:0, 1:25000, 2:70000, 3:140000})[b.stage];
+
+      if (b.name === "Regulated Platform") base = Math.floor(base * 1.25);
+      if (b.name === "Creative IP") base = Math.floor(base * (b.stage <= 1 ? 0.7 : 1.1));
+
+      base += Math.floor((b.quality / 100) * 25000);
+      b.cashflow = base;
+
+      let passiveRatio = ({0:0.0, 1:0.15, 2:0.35, 3:0.55})[b.stage] + (b.quality / 100) * 0.15;
+      passiveRatio = clamp(passiveRatio, 0.0, 0.75);
+      b.passive = Math.floor(b.cashflow * passiveRatio);
+
+      b.risk = clamp(b.risk - Math.floor(qGain * 0.25), 5, 95);
+      b.burnoutLoad = clamp(15 - Math.floor(b.quality / 10), 3, 15);
+
+      return oldStage !== b.stage;
+    }
+
+    function impliedSellValue(b) {
+      if (b.cashflow <= 0) return 0;
+      const mult = b.sellMultLow + Math.random() * (b.sellMultHigh - b.sellMultLow);
+      const earnings = Math.floor(b.cashflow * 0.8 + b.passive * 0.2);
+      return Math.floor(mult * earnings);
+    }
+
+    // ---------- Events ----------
+    const EVENTS = [
+      {
+        name: "Partner Retires",
+        desc: "A key partner slows down. Your platform needs redundancy.",
+        apply: (s) => { s.logEvent("Risk +8, Cash -15k, Burnout +6"); s.reg.risk = clamp(s.reg.risk + 8, 5, 95); s.cash -= 15000; s.burnout = clamp(s.burnout + 6, 0, 100); }
+      },
+      {
+        name: "Compliance Audit",
+        desc: "A compliance review happens. If your SOP is strong, you gain trust.",
+        apply: (s) => {
+          const q = (s.reg.quality + s.cre.quality) / 2;
+          if (q >= 60) { s.logEvent("SOP holds: Cash +15k, Burnout -4"); s.cash += 15000; s.burnout = clamp(s.burnout - 4, 0, 100); }
+          else { s.logEvent("Gaps found: Cash -15k, Burnout +6"); s.cash -= 15000; s.burnout = clamp(s.burnout + 6, 0, 100); }
+        }
+      },
+      {
+        name: "Big Referral Wave",
+        desc: "A surge of warm introductions hits your funnel.",
+        apply: (s) => { s.logEvent("Cash +25k, Burnout +5"); s.cash += 25000; s.burnout = clamp(s.burnout + 5, 0, 100); }
+      },
+      {
+        name: "Market Downturn",
+        desc: "Consumers tighten spending. Volume softens temporarily.",
+        apply: (s) => { s.logEvent("Cash -20k, Burnout +3"); s.cash -= 20000; s.burnout = clamp(s.burnout + 3, 0, 100); }
+      },
+      {
+        name: "AI Breakthrough",
+        desc: "Automation tools become cheaper and more capable.",
+        apply: (s) => { s.logEvent("Reg/Cre Quality +10, Burnout -4"); s.reg.quality = clamp(s.reg.quality + 10, 0, 100); s.cre.quality = clamp(s.cre.quality + 10, 0, 100); s.burnout = clamp(s.burnout - 4, 0, 100); }
+      },
+      {
+        name: "Key Runner Leaves",
+        desc: "A top runner stops producing. Slot management matters.",
+        apply: (s) => { s.logEvent("Cash -12k, Burnout +4"); s.cash -= 12000; s.burnout = clamp(s.burnout + 4, 0, 100); }
+      },
+      {
+        name: "Great Hire",
+        desc: "You find someone who runs ops like a machine.",
+        apply: (s) => { s.logEvent("Burnout -8, Risk -6"); s.burnout = clamp(s.burnout - 8, 0, 100); s.reg.risk = clamp(s.reg.risk - 6, 5, 95); s.cre.risk = clamp(s.cre.risk - 6, 5, 95); }
+      },
+      {
+        name: "Unexpected Rule Change",
+        desc: "Rules shift; you must adjust scripts and workflow.",
+        apply: (s) => { s.logEvent("Risk +10, Cash -10k, Burnout +4"); s.reg.risk = clamp(s.reg.risk + 10, 5, 95); s.cash -= 10000; s.burnout = clamp(s.burnout + 4, 0, 100); }
+      },
+    ];
+
+    // ---------- State ----------
+    const state = {
+      year: 1,
+      cash: 50000,
+      expenses: 90000,
+      burnout: 15,
+      health: 85,
+      stocks: 20000,
+      stockMu: 0.08,
+      stockSig: 0.16,
+      lastStockR: 0,
+      reg: makeBusiness("Regulated Platform", { risk: 35, burnoutLoad: 14, sellMultLow: 3.0, sellMultHigh: 6.5 }),
+      cre: makeBusiness("Creative IP", { risk: 25, burnoutLoad: 10, sellMultLow: 2.0, sellMultHigh: 5.0 }),
+      sellChoice: 0,
+      playing: true,
+      logLines: [],
+      logEvent(msg) { this.logLines.push("  • " + msg); },
+      logHeader(title, desc) {
+        this.logLines.push("");
+        this.logLines.push("=== " + title + " ===");
+        this.logLines.push(desc);
+      }
+    };
+
+    // ---------- UI refs ----------
+    const $ = (id) => document.getElementById(id);
+    const els = {
+      yearPill: $("yearPill"), statusPill: $("statusPill"),
+      cashV: $("cashV"), expV: $("expV"), activeV: $("activeV"), passiveV: $("passiveV"),
+      burnBar: $("burnBar"), burnV: $("burnV"), healthBar: $("healthBar"), healthV: $("healthV"),
+      stocksV: $("stocksV"), stocksR: $("stocksR"),
+      rpMeta: $("rpMeta"), rpCF: $("rpCF"), rpP: $("rpP"),
+      ciMeta: $("ciMeta"), ciCF: $("ciCF"), ciP: $("ciP"),
+      eReg: $("eReg"), eCre: $("eCre"), eRegLbl: $("eRegLbl"), eCreLbl: $("eCreLbl"),
+      cReg: $("cReg"), cCre: $("cCre"), cStk: $("cStk"),
+      sellNote: $("sellNote"),
+      log: $("log"),
+      btnApply: $("btnApply"), btnNext: $("btnNext"),
+      btnReset: $("btnReset"),
+      guardNote: $("guardNote"),
+      sell0: $("sell0"), sell10: $("sell10"), sell20: $("sell20"), sell30: $("sell30"),
+    };
+
+    function computeTotals() {
+      const active = state.reg.cashflow + state.cre.cashflow;
+      const safeWithdraw = Math.floor(state.stocks * 0.03); // conservative
+      const passive = state.reg.passive + state.cre.passive + safeWithdraw;
+      return { active, passive, safeWithdraw };
+    }
+
+    function render() {
+      const { active, passive } = computeTotals();
+
+      els.yearPill.textContent = `Year ${state.year}/${YEARS}`;
+      els.statusPill.textContent = state.playing ? "Playing" : "Finished";
+
+      els.cashV.textContent = fmtMoney(state.cash);
+      els.expV.textContent = fmtMoney(state.expenses);
+      els.activeV.textContent = fmtMoney(active);
+      els.passiveV.textContent = fmtMoney(passive);
+
+      els.burnBar.style.width = `${clamp(state.burnout, 0, 100)}%`;
+      els.burnV.textContent = `${state.burnout}/100`;
+
+      els.healthBar.style.width = `${clamp(state.health, 0, 100)}%`;
+      els.healthV.textContent = `${state.health}/100`;
+
+      els.stocksV.textContent = fmtMoney(state.stocks);
+      els.stocksR.textContent = `Return: ${fmtPct(state.lastStockR)}`;
+
+      els.rpMeta.textContent = `stage ${state.reg.stage} • q ${state.reg.quality} • risk ${state.reg.risk}`;
+      els.rpCF.textContent = fmtMoney(state.reg.cashflow);
+      els.rpP.textContent = fmtMoney(state.reg.passive);
+
+      els.ciMeta.textContent = `stage ${state.cre.stage} • q ${state.cre.quality} • risk ${state.cre.risk}`;
+      els.ciCF.textContent = fmtMoney(state.cre.cashflow);
+      els.ciP.textContent = fmtMoney(state.cre.passive);
+
+      els.eRegLbl.textContent = els.eReg.value;
+      els.eCreLbl.textContent = els.eCre.value;
+
+      // Equity sale availability
+      if (state.year >= 4 && state.playing) els.sellNote.textContent = `Selected: ${state.sellChoice}%`;
+      else els.sellNote.textContent = "Not available yet";
+
+      // Guard rails note
+      els.guardNote.textContent = "";
+
+      // Disable buttons if finished
+      els.btnApply.disabled = !state.playing;
+      els.btnNext.disabled = !state.playing;
+
+      // Log
+      els.log.textContent = state.logLines.slice(-250).join("\n");
+    }
+
+    function applyStockGrowth() {
+      let r = state.stockMu + randNorm() * state.stockSig;
+      r = clamp(r, -0.45, 0.60);
+      state.stocks = Math.floor(state.stocks * (1 + r));
+      state.lastStockR = r;
+      state.logEvent(`Stocks: ${fmtPct(r)} → ${fmtMoney(state.stocks)}`);
+    }
+
+    function maybeEvent() {
+      if (state.year < 2) return;
+      if (Math.random() > 0.75) return; // 75% chance
+      const ev = EVENTS[randInt(0, EVENTS.length - 1)];
+      state.logHeader("EVENT: " + ev.name, ev.desc);
+      ev.apply(state);
+    }
+
+    function enforceBudgetBuffer(cashInvestTotal) {
+      // Keep $5k buffer
+      const buffer = 5000;
+      const maxInvest = Math.max(0, state.cash - buffer);
+      if (cashInvestTotal > maxInvest) return maxInvest;
+      return cashInvestTotal;
+    }
+
+    function advanceYear() {
+      if (!state.playing) return;
+
+      // --- Read inputs ---
+      let eReg = parseInt(els.eReg.value, 10) || 0;
+      let eCre = parseInt(els.eCre.value, 10) || 0;
+      if (eReg + eCre > 100) {
+        const total = eReg + eCre;
+        eReg = Math.floor(100 * (eReg / total));
+        eCre = 100 - eReg;
+        state.logEvent(`Energy exceeded 100, auto-rebalanced: Reg ${eReg}, Cre ${eCre}`);
+      }
+      const eRest = 100 - (eReg + eCre);
+
+      let cReg = Math.max(0, parseInt(els.cReg.value, 10) || 0);
+      let cCre = Math.max(0, parseInt(els.cCre.value, 10) || 0);
+      let cStk = Math.max(0, parseInt(els.cStk.value, 10) || 0);
+
+      let investTotal = cReg + cCre + cStk;
+      const allowed = enforceBudgetBuffer(investTotal);
+
+      if (investTotal > allowed) {
+        // scale down proportionally (simple)
+        const scale = allowed / investTotal;
+        cReg = Math.floor(cReg * scale);
+        cCre = Math.floor(cCre * scale);
+        cStk = Math.floor(cStk * scale);
+        investTotal = cReg + cCre + cStk;
+        state.logEvent(`Cash invests scaled to keep $5k buffer: Reg ${fmtMoney(cReg)}, Cre ${fmtMoney(cCre)}, Stk ${fmtMoney(cStk)}`);
+      }
+
+      // --- Year header ---
+      state.logLines.push("");
+      state.logLines.push("----------------------------------------------------------------");
+      state.logLines.push(`YEAR ${state.year}`);
+      state.logLines.push("----------------------------------------------------------------");
+
+      // --- Event + Stocks ---
+      maybeEvent();
+      applyStockGrowth();
+
+      // --- Apply investments ---
+      state.cash -= investTotal;
+      state.stocks += cStk;
+
+      const upR = investBusiness(state.reg, eReg, cReg);
+      const upC = investBusiness(state.cre, eCre, cCre);
+      if (upR) state.logEvent(`Regulated leveled up → stage ${state.reg.stage}`);
+      if (upC) state.logEvent(`Creative leveled up → stage ${state.cre.stage}`);
+
+      // --- Burnout / Health dynamics ---
+      let burnoutGain = state.reg.burnoutLoad + state.cre.burnoutLoad;
+      burnoutGain -= Math.floor(0.08 * eRest); // resting helps
+      burnoutGain = Math.max(0, burnoutGain);
+
+      // baseline recovery
+      state.burnout = clamp(state.burnout + burnoutGain - 6, 0, 100);
+
+      if (state.burnout >= 75) state.health = clamp(state.health - 10, 0, 100);
+      else if (state.burnout <= 35) state.health = clamp(state.health + 2, 0, 100);
+
+      // --- Cashflow + expenses ---
+      const { active, passive } = computeTotals();
+      let penalty = 1.0 - (state.burnout / 180);
+      penalty = clamp(penalty, 0.55, 1.0);
+      const earned = Math.floor(active * penalty);
+
+      state.cash += earned;
+      state.cash -= state.expenses;
+      state.cash += randInt(-5000, 8000);
+
+      state.logEvent(`Active earned (after burnout penalty): ${fmtMoney(earned)}; Expenses: ${fmtMoney(state.expenses)}`);
+      state.logEvent(`End cash: ${fmtMoney(state.cash)}; Passive (yr): ${fmtMoney(passive)}`);
+
+      // --- Optional equity sale (Year 4+) ---
+      if (state.year >= 4 && state.sellChoice > 0) {
+        const val = impliedSellValue(state.reg);
+        const proceeds = Math.floor(val * (state.sellChoice / 100));
+        // reduce future cashflows proportionally (simplified)
+        state.reg.cashflow = Math.floor(state.reg.cashflow * (1 - state.sellChoice / 100));
+        state.reg.passive = Math.floor(state.reg.passive * (1 - state.sellChoice / 100));
+        state.cash += proceeds;
+        state.logEvent(`Sold ${state.sellChoice}% Regulated @ implied ${fmtMoney(val)} → proceeds ${fmtMoney(proceeds)}`);
+        state.sellChoice = 0; // reset after sale
+      }
+
+      // --- Lose condition (cash crash) ---
+      if (state.cash < -25000) {
+        state.playing = false;
+        state.status = "Game Over";
+        state.logLines.push("");
+        state.logLines.push("!!! GAME OVER: Cash fell below -$25k. Try keeping a buffer + SOP earlier.");
+      }
+
+      // --- Advance year / end ---
+      if (state.playing) state.year += 1;
+
+      if (state.year > YEARS) {
+        state.playing = false;
+        const end = computeTotals();
+        state.logLines.push("");
+        state.logLines.push("================================================================");
+        state.logLines.push("GAME END — YEAR 10");
+        state.logLines.push("================================================================");
+        state.logLines.push(`Final cash: ${fmtMoney(state.cash)}`);
+        state.logLines.push(`Stocks: ${fmtMoney(state.stocks)}`);
+        state.logLines.push(`Regulated passive (yr): ${fmtMoney(state.reg.passive)} | Creative passive (yr): ${fmtMoney(state.cre.passive)}`);
+        state.logLines.push(`Total passive (yr): ${fmtMoney(end.passive)} | Expenses (yr): ${fmtMoney(state.expenses)}`);
+        state.logLines.push(`Burnout: ${state.burnout}/100 | Health: ${state.health}/100`);
+
+        if (end.passive >= state.expenses && state.health >= 50) {
+          state.logLines.push("");
+          state.logLines.push("🏁 RETIREMENT ACHIEVED: Passive income covers expenses.");
+        } else if (end.passive >= state.expenses) {
+          state.logLines.push("");
+          state.logLines.push("✅ Financially retired, but health/burnout needs attention.");
+        } else {
+          state.logLines.push("");
+          state.logLines.push("⏳ Not retired yet. Iterate strategy and try again.");
+        }
+      }
+
+      render();
+    }
+
+    function resetGame() {
+      state.year = 1;
+      state.cash = 50000;
+      state.expenses = 90000;
+      state.burnout = 15;
+      state.health = 85;
+      state.stocks = 20000;
+      state.lastStockR = 0;
+      state.reg = makeBusiness("Regulated Platform", { risk: 35, burnoutLoad: 14, sellMultLow: 3.0, sellMultHigh: 6.5 });
+      state.cre = makeBusiness("Creative IP", { risk: 25, burnoutLoad: 10, sellMultLow: 2.0, sellMultHigh: 5.0 });
+      state.sellChoice = 0;
+      state.playing = true;
+      state.logLines = [
+        "Welcome to Exit in 10.",
+        "Allocate energy + cash each year. Keep burnout down. Build passive income.",
+        "Tip: SOP/automation is your leverage."
+      ];
+      els.eReg.value = 55;
+      els.eCre.value = 30;
+      els.cReg.value = 15000;
+      els.cCre.value = 8000;
+      els.cStk.value = 7000;
+      render();
+    }
+
+    // --- Equity selection buttons ---
+    function setSellChoice(p) {
+      if (state.year < 4 || !state.playing) return;
+      state.sellChoice = p;
+      render();
+    }
+
+    // --- Wire up ---
+    els.btnApply.addEventListener("click", advanceYear);
+    els.btnNext.addEventListener("click", advanceYear);
+    els.btnReset.addEventListener("click", resetGame);
+
+    els.eReg.addEventListener("input", () => {
+      // keep total <= 100 by auto-adjusting other slider if needed
+      const reg = parseInt(els.eReg.value, 10);
+      let cre = parseInt(els.eCre.value, 10);
+      if (reg + cre > 100) {
+        cre = 100 - reg;
+        els.eCre.value = String(clamp(cre, 0, 100));
+      }
+      render();
+    });
+    els.eCre.addEventListener("input", () => {
+      const cre = parseInt(els.eCre.value, 10);
+      let reg = parseInt(els.eReg.value, 10);
+      if (reg + cre > 100) {
+        reg = 100 - cre;
+        els.eReg.value = String(clamp(reg, 0, 100));
+      }
+      render();
+    });
+
+    els.sell0.addEventListener("click", () => setSellChoice(0));
+    els.sell10.addEventListener("click", () => setSellChoice(10));
+    els.sell20.addEventListener("click", () => setSellChoice(20));
+    els.sell30.addEventListener("click", () => setSellChoice(30));
+
+    // Initial paint
+    resetGame();
+  </script>
 </body>
 </html>
