@@ -1,75 +1,84 @@
 <!--
-Exit in 10 — GitHub Pages / Single-file HTML game (no build tools)
+《十年退休》— 變體：Runner 平台 × 兩門生意 × 股權出售（中文版本）
+單一檔案（index.html）可直接放 GitHub Pages 跑，免安裝、免 build。
 
-How to run locally:
-  1) Save as index.html
-  2) Open in browser (double-click) OR use a local server.
+玩法：
+- 每一年＝一回合
+- 你有「精力 100」要分配：主業（債務/合規服務平台）、創作IP、系統化（SOP/AI）
+- 有「Runner 名額」與「管理費」現金流
+- 有「成交率 / 成功率」影響 contingency
+- 第 4 年開始可賣主業股權（10/20/30%）套現，降低風險
+- 股票是被動資產（每年隨機回報 + 3% 保守提領計入被動收入）
+- 目標：第 10 年「被動收入 ≥ 年支出」且健康不崩
 
-How to run on GitHub Pages:
-  1) Create a repo (e.g., exit-in-10)
-  2) Add this file as index.html at repo root
-  3) GitHub → Settings → Pages → Deploy from branch → main / (root)
-  4) Visit the Pages URL
-
-This is a simple MVP (turn-based, 10 years). Extend freely.
+部署 GitHub Pages：
+1) 新建 repo（例如 exit-in-10-cn）
+2) 把此檔案命名為 index.html 放在 repo 根目錄
+3) GitHub → Settings → Pages → Deploy from branch → main / (root)
+4) 打開 Pages URL 即可玩
 -->
 <!doctype html>
-<html lang="en">
+<html lang="zh-Hant">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Exit in 10 — Life Allocation Simulator</title>
+  <title>十年退休 — Runner 平台模擬器（中文）</title>
   <style>
     :root { color-scheme: light dark; }
-    body { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 0; }
-    .wrap { max-width: 980px; margin: 0 auto; padding: 18px; }
+    body { font-family: ui-sans-serif, system-ui, -apple-system, "PingFang TC", "Noto Sans TC", Segoe UI, Roboto, Arial; margin: 0; }
+    .wrap { max-width: 1100px; margin: 0 auto; padding: 18px; }
     h1 { margin: 6px 0 6px; font-size: 22px; }
-    .sub { opacity: .8; margin: 0 0 14px; line-height: 1.35; }
+    .sub { opacity: .82; margin: 0 0 14px; line-height: 1.5; }
     .grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
-    @media (min-width: 900px) { .grid { grid-template-columns: 1.1fr .9fr; } }
-    .card { border: 1px solid rgba(127,127,127,.25); border-radius: 12px; padding: 14px; background: rgba(127,127,127,.05); }
+    @media (min-width: 980px) { .grid { grid-template-columns: 1.2fr .8fr; } }
+    .card { border: 1px solid rgba(127,127,127,.25); border-radius: 14px; padding: 14px; background: rgba(127,127,127,.05); }
     .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .sep { height: 1px; background: rgba(127,127,127,.25); margin: 10px 0; }
+    .pill { font-size: 12px; border: 1px solid rgba(127,127,127,.35); padding: 4px 8px; border-radius: 999px; opacity: .9; }
+    .muted { opacity: .75; }
     .kpi { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; }
-    @media (min-width: 650px) { .kpi { grid-template-columns: repeat(4, minmax(0,1fr)); } }
+    @media (min-width: 760px) { .kpi { grid-template-columns: repeat(4, minmax(0,1fr)); } }
     .k { font-size: 12px; opacity: .75; }
-    .v { font-size: 16px; font-weight: 700; }
-    .bar { height: 10px; border-radius: 999px; background: rgba(127,127,127,.25); overflow: hidden; width: 220px; }
-    .bar > div { height: 100%; background: rgba(80,180,120,.8); width: 50%; }
-    .bar.red > div { background: rgba(220,90,90,.85); }
+    .v { font-size: 16px; font-weight: 800; }
+    .bar { height: 10px; border-radius: 999px; background: rgba(127,127,127,.25); overflow: hidden; width: 230px; }
+    .bar > div { height: 100%; background: rgba(80,180,120,.85); width: 50%; }
+    .bar.red > div { background: rgba(220,90,90,.88); }
     label { font-size: 12px; opacity: .85; display: block; margin-bottom: 4px; }
     input[type="number"], input[type="range"] { width: 100%; }
     input[type="number"] { padding: 8px 10px; border-radius: 10px; border: 1px solid rgba(127,127,127,.35); background: transparent; }
     .two { display: grid; grid-template-columns: 1fr; gap: 10px; }
-    @media (min-width: 650px) { .two { grid-template-columns: 1fr 1fr; } }
-    button { padding: 10px 12px; border-radius: 12px; border: 1px solid rgba(127,127,127,.35); background: rgba(127,127,127,.12); cursor: pointer; font-weight: 700; }
+    @media (min-width: 760px) { .two { grid-template-columns: 1fr 1fr; } }
+    button { padding: 10px 12px; border-radius: 12px; border: 1px solid rgba(127,127,127,.35); background: rgba(127,127,127,.12); cursor: pointer; font-weight: 800; }
     button.primary { background: rgba(90,160,240,.25); }
     button:disabled { opacity: .5; cursor: not-allowed; }
-    .log { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; font-size: 12px; white-space: pre-wrap; line-height: 1.35; }
-    .pill { font-size: 12px; border: 1px solid rgba(127,127,127,.35); padding: 4px 8px; border-radius: 999px; opacity: .85; }
-    .muted { opacity: .75; }
-    .danger { color: rgb(220,90,90); }
+    .log { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; font-size: 12px; white-space: pre-wrap; line-height: 1.45; }
     .good { color: rgb(80,180,120); }
-    .sep { height: 1px; background: rgba(127,127,127,.25); margin: 10px 0; }
+    .bad { color: rgb(220,90,90); }
+    .hint { font-size: 12px; opacity: .8; line-height: 1.4; }
+    .mini { font-size: 12px; opacity: .85; }
+    .btnrow button { padding: 7px 10px; font-size: 12px; }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <h1>Exit in 10 — Life Allocation Simulator</h1>
+    <h1>十年退休 — Runner 平台模擬器（中文變體）</h1>
     <p class="sub">
-      10-year turn-based sim: build <b>Regulated Platform</b> + <b>Creative IP</b>, invest in <b>Stocks</b>, manage <b>Burnout</b>.
-      Win if <b>Passive Income ≥ Expenses</b> by Year 10.
+      你經營兩門生意：<b>主業（債務/合規服務分發平台）</b> + <b>創作IP（敘事音樂/授權）</b>。<br/>
+      你同時可以招募 <b>Runner</b>（名額制），收 <b>管理費</b>、分 <b>contingency</b>，並在第 4 年後選擇賣 <b>10/20/30%</b> 股權套現。<br/>
+      目標：第 10 年達成 <b>被動收入 ≥ 年支出</b>，且健康不崩。
     </p>
 
     <div class="grid">
       <div class="card">
         <div class="row" style="justify-content:space-between;">
           <div class="row">
-            <span class="pill" id="yearPill">Year 1/10</span>
-            <span class="pill" id="statusPill">Playing</span>
+            <span class="pill" id="yearPill">第 1 年 / 10 年</span>
+            <span class="pill" id="statusPill">進行中</span>
+            <span class="pill" id="runnerPill">Runner：0 人</span>
           </div>
           <div class="row">
-            <button id="btnReset">Reset</button>
-            <button class="primary" id="btnNext">Next Year ▶</button>
+            <button id="btnReset">重開</button>
+            <button class="primary" id="btnNext">下一年 ▶</button>
           </div>
         </div>
 
@@ -77,19 +86,19 @@ This is a simple MVP (turn-based, 10 years). Extend freely.
 
         <div class="kpi">
           <div>
-            <div class="k">Cash</div>
+            <div class="k">現金（Cash）</div>
             <div class="v" id="cashV">$0</div>
           </div>
           <div>
-            <div class="k">Yearly Expenses</div>
+            <div class="k">年支出（Expenses）</div>
             <div class="v" id="expV">$0</div>
           </div>
           <div>
-            <div class="k">Active Cashflow (yr)</div>
+            <div class="k">主動現金流（Active/yr）</div>
             <div class="v" id="activeV">$0</div>
           </div>
           <div>
-            <div class="k">Passive Income (yr)</div>
+            <div class="k">被動收入（Passive/yr）</div>
             <div class="v" id="passiveV">$0</div>
           </div>
         </div>
@@ -105,16 +114,16 @@ This is a simple MVP (turn-based, 10 years). Extend freely.
             </div>
           </div>
           <div>
-            <div class="k">Health</div>
+            <div class="k">健康（Health）</div>
             <div class="row">
               <div class="bar"><div id="healthBar"></div></div>
               <span class="pill" id="healthV">0/100</span>
             </div>
           </div>
           <div>
-            <div class="k">Stocks Balance</div>
+            <div class="k">股票資產（Stocks）</div>
             <div class="v" id="stocksV">$0</div>
-            <div class="muted" id="stocksR">Return: 0%</div>
+            <div class="muted" id="stocksR">今年回報：0%</div>
           </div>
         </div>
 
@@ -123,523 +132,789 @@ This is a simple MVP (turn-based, 10 years). Extend freely.
         <div class="two">
           <div class="card">
             <div class="row" style="justify-content:space-between;">
-              <b>Regulated Platform</b>
-              <span class="pill" id="rpMeta">stage 0 • q 0 • risk 0</span>
+              <b>主業平台（Regulated Platform）</b>
+              <span class="pill" id="rpMeta">等級 0 • SOP 0 • 風險 0</span>
             </div>
             <div class="row">
               <div>
-                <div class="k">Cashflow /yr</div>
-                <div class="v" id="rpCF">$0</div>
+                <div class="k">成交數（Leads→Cases/yr）</div>
+                <div class="v" id="rpCases">0</div>
               </div>
               <div>
-                <div class="k">Passive /yr</div>
-                <div class="v" id="rpP">$0</div>
+                <div class="k">管理費收入（Mgmt/yr）</div>
+                <div class="v" id="rpMgmt">$0</div>
+              </div>
+              <div>
+                <div class="k">Contingency（你分成/yr）</div>
+                <div class="v" id="rpCont">$0</div>
               </div>
             </div>
+            <div class="mini muted" id="rpRates"></div>
           </div>
 
           <div class="card">
             <div class="row" style="justify-content:space-between;">
-              <b>Creative IP</b>
-              <span class="pill" id="ciMeta">stage 0 • q 0 • risk 0</span>
+              <b>創作IP（Creative IP）</b>
+              <span class="pill" id="ciMeta">等級 0 • Library 0 • 風險 0</span>
             </div>
             <div class="row">
               <div>
-                <div class="k">Cashflow /yr</div>
+                <div class="k">授權收入（Active/yr）</div>
                 <div class="v" id="ciCF">$0</div>
               </div>
               <div>
-                <div class="k">Passive /yr</div>
+                <div class="k">被動授權（Passive/yr）</div>
                 <div class="v" id="ciP">$0</div>
               </div>
             </div>
+            <div class="mini muted" id="ciNotes"></div>
           </div>
         </div>
 
         <div class="sep"></div>
 
         <div class="card">
-          <b>Decisions (per year)</b>
-          <p class="muted" style="margin:6px 0 10px;">
-            Allocate <b>Energy (100)</b> + <b>Cash investments</b>. More SOP/automation → more passive, less burnout.
+          <b>年度決策（每一年）</b>
+          <p class="hint">
+            你有 <b>精力 100</b>，分配到：主業 / 創作 / 系統化（SOP/AI）。<br/>
+            系統化會降低 Burnout、提升成功率，也會令主業更「可出售」。
           </p>
 
           <div class="two">
             <div>
-              <label>Energy → Regulated Platform: <span id="eRegLbl">55</span></label>
+              <label>精力 → 主業平台：<span id="eRegLbl">55</span></label>
               <input id="eReg" type="range" min="0" max="100" value="55" />
             </div>
             <div>
-              <label>Energy → Creative IP: <span id="eCreLbl">30</span></label>
-              <input id="eCre" type="range" min="0" max="100" value="30" />
+              <label>精力 → 創作IP：<span id="eCreLbl">25</span></label>
+              <input id="eCre" type="range" min="0" max="100" value="25" />
             </div>
           </div>
 
           <div class="two" style="margin-top:10px;">
             <div>
-              <label>Cash invest → Regulated (keep a $5k buffer)</label>
-              <input id="cReg" type="number" min="0" step="1000" value="15000" />
+              <label>精力 → 系統化（SOP/AI）：<span id="eSysLbl">20</span></label>
+              <input id="eSys" type="range" min="0" max="100" value="20" />
+            </div>
+            <div class="hint">
+              <span class="pill">提示</span>
+              <span class="muted">三者總和自動鎖在 100。</span>
+            </div>
+          </div>
+
+          <div class="sep"></div>
+
+          <div class="two">
+            <div>
+              <label>現金投入 → 主業（行銷/招募/訓練）</label>
+              <input id="cReg" type="number" min="0" step="1000" value="12000" />
             </div>
             <div>
-              <label>Cash invest → Creative</label>
-              <input id="cCre" type="number" min="0" step="1000" value="8000" />
+              <label>現金投入 → 創作（作品庫/授權管道）</label>
+              <input id="cCre" type="number" min="0" step="1000" value="6000" />
             </div>
           </div>
 
           <div class="two" style="margin-top:10px;">
             <div>
-              <label>Cash invest → Stocks</label>
+              <label>現金投入 → 股票（被動資產）</label>
               <input id="cStk" type="number" min="0" step="1000" value="7000" />
             </div>
             <div>
-              <label>Optional: Sell Regulated equity (Year 4+)</label>
-              <div class="row">
+              <label>招募 Runner（每年可新增 0–3 人）</label>
+              <input id="addRunner" type="number" min="0" max="3" step="1" value="1" />
+              <div class="muted mini">每個 Runner 有名額上限，帶來管理費現金流，但也增加管理負擔。</div>
+            </div>
+          </div>
+
+          <div class="sep"></div>
+
+          <div class="two">
+            <div>
+              <label>Runner 收費設定（你可調）</label>
+              <div class="two">
+                <div>
+                  <label>管理費（每 Runner / 月）</label>
+                  <input id="mgmtFee" type="number" min="0" step="50" value="400" />
+                </div>
+                <div>
+                  <label>每 Runner 年名額（spots / yr）</label>
+                  <input id="spots" type="number" min="1" max="24" step="1" value="10" />
+                </div>
+              </div>
+              <div class="two" style="margin-top:10px;">
+                <div>
+                  <label>每單初始費（Initial Fee）</label>
+                  <input id="initialFee" type="number" min="0" step="100" value="1500" />
+                </div>
+                <div>
+                  <label>你從 contingency 分成（你拿幾分之幾）</label>
+                  <input id="contShare" type="number" min="0" max="1" step="0.05" value="0.33" />
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label>第 4 年後：可出售主業股權（套現）</label>
+              <div class="row btnrow">
                 <button id="sell0" class="pill">0%</button>
                 <button id="sell10" class="pill">10%</button>
                 <button id="sell20" class="pill">20%</button>
                 <button id="sell30" class="pill">30%</button>
-                <span class="muted" id="sellNote">Not available yet</span>
+                <span class="muted" id="sellNote">未開放</span>
+              </div>
+              <div class="muted mini">
+                賣股權＝一次性套現，但未來主業收入會按比例下降（簡化模型）。
               </div>
             </div>
           </div>
 
           <div class="sep"></div>
+
           <div class="row" style="justify-content:space-between;">
             <span class="muted" id="guardNote"></span>
-            <button class="primary" id="btnApply">Apply & Advance Year ▶</button>
+            <button class="primary" id="btnApply">套用並進入下一年 ▶</button>
           </div>
         </div>
       </div>
 
       <div class="card">
-        <b>Event Log</b>
+        <b>事件 & 年度紀錄</b>
         <div class="sep"></div>
         <div class="log" id="log"></div>
       </div>
     </div>
   </div>
 
-  <script>
-    // ---------- Utilities ----------
-    const YEARS = 10;
-    const clamp = (x, lo, hi) => Math.max(lo, Math.min(hi, x));
-    const fmtMoney = (n) => "$" + Math.round(n).toLocaleString("en-US");
-    const fmtPct = (x) => Math.round(x * 100) + "%";
-    const randInt = (a, b) => Math.floor(Math.random() * (b - a + 1)) + a;
-    const randNorm = () => { // Box-Muller
-      let u = 0, v = 0;
-      while (u === 0) u = Math.random();
-      while (v === 0) v = Math.random();
-      return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+<script>
+  // ---------- Utility ----------
+  const YEARS = 10;
+  const clamp = (x, lo, hi) => Math.max(lo, Math.min(hi, x));
+  const money = (n) => "$" + Math.round(n).toLocaleString("en-US");
+  const pct = (x) => Math.round(x * 100) + "%";
+  const rint = (a, b) => Math.floor(Math.random() * (b - a + 1)) + a;
+  const randNorm = () => {
+    let u = 0, v = 0;
+    while (u === 0) u = Math.random();
+    while (v === 0) v = Math.random();
+    return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+  };
+
+  // ---------- State ----------
+  const state = {
+    year: 1,
+    playing: true,
+
+    // Personal
+    cash: 50000,
+    expenses: 90000,
+    burnout: 18,
+    health: 85,
+
+    // Stocks
+    stocks: 20000,
+    stockMu: 0.08,
+    stockSig: 0.16,
+    lastStockR: 0,
+
+    // Platform (主業) core
+    rpLevel: 0,     // 0..3
+    sop: 0,         // 0..100
+    rpRisk: 35,     // 5..95
+    runners: 0,
+    runnerMgmtLoad: 0,
+
+    // Creative IP
+    ciLevel: 0,     // 0..3
+    library: 0,     // 0..100
+    ciRisk: 25,
+
+    // Revenue snapshot per year
+    rpCases: 0,
+    rpMgmtRev: 0,
+    rpContRev: 0,
+    ciActive: 0,
+    ciPassive: 0,
+
+    // equity sale choice
+    sellChoice: 0,
+
+    log: [
+      "歡迎來到《十年退休》— Runner 平台變體。",
+      "你要做的是：穩定主業現金流 + 累積創作資產 + 降低 Burnout。",
+      "第 4 年後可賣主業股權（10/20/30%）套現。"
+    ]
+  };
+
+  // ---------- UI ----------
+  const $ = (id) => document.getElementById(id);
+  const el = {
+    yearPill: $("yearPill"), statusPill: $("statusPill"), runnerPill: $("runnerPill"),
+    cashV: $("cashV"), expV: $("expV"), activeV: $("activeV"), passiveV: $("passiveV"),
+    burnBar: $("burnBar"), burnV: $("burnV"),
+    healthBar: $("healthBar"), healthV: $("healthV"),
+    stocksV: $("stocksV"), stocksR: $("stocksR"),
+    rpMeta: $("rpMeta"), rpCases: $("rpCases"), rpMgmt: $("rpMgmt"), rpCont: $("rpCont"), rpRates: $("rpRates"),
+    ciMeta: $("ciMeta"), ciCF: $("ciCF"), ciP: $("ciP"), ciNotes: $("ciNotes"),
+    eReg: $("eReg"), eCre: $("eCre"), eSys: $("eSys"),
+    eRegLbl: $("eRegLbl"), eCreLbl: $("eCreLbl"), eSysLbl: $("eSysLbl"),
+    cReg: $("cReg"), cCre: $("cCre"), cStk: $("cStk"),
+    addRunner: $("addRunner"),
+    mgmtFee: $("mgmtFee"), spots: $("spots"), initialFee: $("initialFee"), contShare: $("contShare"),
+    sellNote: $("sellNote"),
+    sell0: $("sell0"), sell10: $("sell10"), sell20: $("sell20"), sell30: $("sell30"),
+    guardNote: $("guardNote"),
+    log: $("log"),
+    btnApply: $("btnApply"), btnNext: $("btnNext"), btnReset: $("btnReset"),
+  };
+
+  // ---------- Mechanics (主業) ----------
+  function upgradeLevels() {
+    // 主業等級依 SOP + 年份
+    const old = state.rpLevel;
+    if (state.sop >= 25) state.rpLevel = Math.max(state.rpLevel, 1);
+    if (state.sop >= 55) state.rpLevel = Math.max(state.rpLevel, 2);
+    if (state.sop >= 80) state.rpLevel = Math.max(state.rpLevel, 3);
+
+    const oldC = state.ciLevel;
+    if (state.library >= 25) state.ciLevel = Math.max(state.ciLevel, 1);
+    if (state.library >= 55) state.ciLevel = Math.max(state.ciLevel, 2);
+    if (state.library >= 80) state.ciLevel = Math.max(state.ciLevel, 3);
+
+    if (state.rpLevel !== old) state.log.push(`>>> 主業平台升級：等級 ${old} → ${state.rpLevel}`);
+    if (state.ciLevel !== oldC) state.log.push(`>>> 創作IP升級：等級 ${oldC} → ${state.ciLevel}`);
+  }
+
+  function calcPlatformFlow(inputs) {
+    // 1) Runner 結構
+    const runners = state.runners;
+    const spots = inputs.spots;
+    const initialFee = inputs.initialFee;
+    const mgmtFee = inputs.mgmtFee; // per month per runner
+
+    // 2) 成交率/成功率：由 SOP、精力、風險影響
+    const sop = state.sop;
+
+    // lead→case close rate（0.20~0.65）
+    let closeRate = 0.22 + (sop/100)*0.30 + (inputs.eReg/100)*0.18 - (state.rpRisk/100)*0.08;
+    closeRate = clamp(closeRate, 0.18, 0.68);
+
+    // debt relief success rate（0.55~0.85）
+    let successRate = 0.55 + (sop/100)*0.22 + (inputs.eSys/100)*0.10 - (state.rpRisk/100)*0.05;
+    successRate = clamp(successRate, 0.50, 0.88);
+
+    // 每個 case 的 contingency base（粗略：跟成功率走）
+    // 你可當每單平均能抽到 $3,500 ~ $9,000（視成功率、金額）
+    let contPerCase = 3500 + successRate * 6500; // 3500 + (0.5~0.88)*6500
+    contPerCase = clamp(contPerCase, 3500, 9500);
+
+    // 你在 contingency 的分成
+    const contShare = clamp(inputs.contShare, 0, 1);
+
+    // 3) 年度 cases：runner spots * closeRate，再加上主業等級放大
+    const levelBoost = [0.9, 1.0, 1.15, 1.25][state.rpLevel];
+    const totalLeads = runners * spots * levelBoost;
+    const cases = Math.floor(totalLeads * closeRate);
+
+    // 4) 初始費：假設公司拿（或平台拿）= 初始費扣除 runner 佣金後的部分
+    // 這裡做簡化：初始費全部進「公司現金」，你之後靠管理費 + contingency 取勝
+    const initialFeeRev = cases * initialFee;
+
+    // 5) Runner 管理費收入
+    const mgmtRev = runners * mgmtFee * 12;
+
+    // 6) Contingency 你分成
+    const contTotal = cases * contPerCase * contShare;
+
+    // 7) 管理負擔（burnout 增加）
+    const mgmtLoad = Math.floor(runners * 2.2); // 每 runner 約 +2.2 burnout base
+
+    return {
+      closeRate, successRate, contPerCase,
+      totalLeads, cases,
+      initialFeeRev, mgmtRev, contTotal,
+      mgmtLoad
+    };
+  }
+
+  // ---------- Mechanics (創作) ----------
+  function calcCreativeFlow(inputs) {
+    // library 影響授權收入曲線；精力與現金可加速 library
+    const level = state.ciLevel;
+
+    // Active 授權（每年）
+    let base = ({0: 0, 1: 12000, 2: 38000, 3: 85000})[level];
+    // 早期慢，後期快
+    base = Math.floor(base * (level <= 1 ? 0.75 : 1.10));
+    base += Math.floor((state.library/100) * 22000);
+
+    // Passive（長尾）比例：隨 library/level 提升
+    let passiveRatio = ({0:0.0, 1:0.18, 2:0.35, 3:0.55})[level] + (state.library/100)*0.12;
+    passiveRatio = clamp(passiveRatio, 0, 0.75);
+    const passive = Math.floor(base * passiveRatio);
+
+    return { active: base, passive, passiveRatio };
+  }
+
+  // ---------- Stocks ----------
+  function applyStockGrowth() {
+    let r = state.stockMu + randNorm() * state.stockSig;
+    r = clamp(r, -0.45, 0.60);
+    state.stocks = Math.floor(state.stocks * (1 + r));
+    state.lastStockR = r;
+  }
+
+  // ---------- Events ----------
+  const EVENTS = [
+    {
+      name: "Partner 老化 / 退休",
+      desc: "主業依賴某個合作方，突然慢下來。",
+      apply(inputs) {
+        state.rpRisk = clamp(state.rpRisk + 8, 5, 95);
+        state.cash -= 12000;
+        state.burnout = clamp(state.burnout + 6, 0, 100);
+        state.log.push("• 風險 +8，現金 -12k，Burnout +6");
+      }
+    },
+    {
+      name: "合規抽查",
+      desc: "SOP 強→過關；SOP 弱→補洞。",
+      apply(inputs) {
+        const q = state.sop;
+        if (q >= 60) {
+          state.cash += 15000;
+          state.burnout = clamp(state.burnout - 4, 0, 100);
+          state.log.push("• SOP 過關：現金 +15k，Burnout -4");
+        } else {
+          state.cash -= 15000;
+          state.burnout = clamp(state.burnout + 6, 0, 100);
+          state.log.push("• SOP 有洞：現金 -15k，Burnout +6");
+        }
+      }
+    },
+    {
+      name: "Runner 流失",
+      desc: "一位 Runner 停產或離開。",
+      apply(inputs) {
+        if (state.runners > 0) state.runners -= 1;
+        state.cash -= 8000;
+        state.burnout = clamp(state.burnout + 3, 0, 100);
+        state.log.push("• Runner -1，現金 -8k，Burnout +3");
+      }
+    },
+    {
+      name: "AI 工具降價",
+      desc: "系統化更划算，更易 SOP 化。",
+      apply(inputs) {
+        state.sop = clamp(state.sop + 10, 0, 100);
+        state.library = clamp(state.library + 6, 0, 100);
+        state.burnout = clamp(state.burnout - 4, 0, 100);
+        state.log.push("• SOP +10，Library +6，Burnout -4");
+      }
+    },
+    {
+      name: "口碑爆發",
+      desc: "主業成交率暫時上升。",
+      apply(inputs) {
+        state.cash += 18000;
+        state.burnout = clamp(state.burnout + 4, 0, 100);
+        state.log.push("• 現金 +18k，Burnout +4");
+      }
+    },
+    {
+      name: "健康警報",
+      desc: "Burnout 太高，身體提醒你。",
+      apply(inputs) {
+        state.health = clamp(state.health - 8, 0, 100);
+        state.burnout = clamp(state.burnout + 5, 0, 100);
+        state.log.push("• 健康 -8，Burnout +5");
+      }
+    }
+  ];
+
+  function maybeEvent(inputs) {
+    if (state.year < 2) return;
+    if (Math.random() > 0.75) return; // 75% chance
+    const ev = EVENTS[rint(0, EVENTS.length - 1)];
+    state.log.push("");
+    state.log.push("=== 事件：" + ev.name + " ===");
+    state.log.push(ev.desc);
+    ev.apply(inputs);
+  }
+
+  // ---------- Equity Sale ----------
+  function impliedSellValuePlatform(annualEarnings) {
+    // 簡化：倍數 3.0~6.5，SOP 越高、風險越低，越偏高
+    const sopFactor = 0.2 + (state.sop/100)*0.8;  // 0.2..1.0
+    const riskFactor = 1.0 - (state.rpRisk/100)*0.35; // 0.67..0.98
+    const baseLow = 3.0, baseHigh = 6.5;
+    const mult = clamp(baseLow + (baseHigh - baseLow) * sopFactor * riskFactor, 3.0, 6.5);
+    return Math.floor(annualEarnings * mult);
+  }
+
+  // ---------- Main Turn ----------
+  function computeTotals(platform, creative) {
+    const active = platform.initialFeeRev + platform.mgmtRev + creative.active;
+    // 被動：contingency（你分成） + creative passive + stocks safe withdraw
+    const safeWithdraw = Math.floor(state.stocks * 0.03);
+    const passive = platform.contTotal + creative.passive + safeWithdraw;
+    return { active, passive, safeWithdraw };
+  }
+
+  function advanceYear() {
+    if (!state.playing) return;
+
+    // Read inputs
+    let eReg = parseInt(el.eReg.value, 10) || 0;
+    let eCre = parseInt(el.eCre.value, 10) || 0;
+    let eSys = parseInt(el.eSys.value, 10) || 0;
+
+    // lock total to 100 by adjusting sys (preferred) then creative
+    let sum = eReg + eCre + eSys;
+    if (sum !== 100) {
+      // adjust sys first
+      let newSys = clamp(100 - (eReg + eCre), 0, 100);
+      eSys = newSys;
+      el.eSys.value = String(eSys);
+      sum = eReg + eCre + eSys;
+      if (sum !== 100) {
+        // final fix: adjust creative
+        eCre = clamp(100 - (eReg + eSys), 0, 100);
+        el.eCre.value = String(eCre);
+      }
+    }
+
+    const inputs = {
+      eReg, eCre, eSys,
+      cReg: Math.max(0, parseInt(el.cReg.value, 10) || 0),
+      cCre: Math.max(0, parseInt(el.cCre.value, 10) || 0),
+      cStk: Math.max(0, parseInt(el.cStk.value, 10) || 0),
+      addRunner: clamp(parseInt(el.addRunner.value, 10) || 0, 0, 3),
+      mgmtFee: Math.max(0, parseInt(el.mgmtFee.value, 10) || 0),
+      spots: clamp(parseInt(el.spots.value, 10) || 10, 1, 24),
+      initialFee: Math.max(0, parseInt(el.initialFee.value, 10) || 0),
+      contShare: clamp(parseFloat(el.contShare.value) || 0, 0, 1)
     };
 
-    // ---------- Models ----------
-    function makeBusiness(name, opts = {}) {
-      return {
-        name,
-        stage: 0,
-        quality: 0,
-        cashflow: 0,
-        passive: 0,
-        risk: opts.risk ?? 20,
-        burnoutLoad: opts.burnoutLoad ?? 15,
-        sellMultLow: opts.sellMultLow ?? 2.0,
-        sellMultHigh: opts.sellMultHigh ?? 5.0
-      };
+    state.log.push("");
+    state.log.push("---------------------------------------------------------------");
+    state.log.push(`第 ${state.year} 年`);
+    state.log.push("---------------------------------------------------------------");
+
+    // 0) Event + Stocks
+    maybeEvent(inputs);
+    applyStockGrowth();
+    state.log.push(`• 股票回報：${pct(state.lastStockR)} → ${money(state.stocks)}`);
+
+    // 1) Add runners (with some friction)
+    if (inputs.addRunner > 0) {
+      // each runner has chance to succeed onboarding (depends on SOP + system energy)
+      let added = 0;
+      for (let i=0; i<inputs.addRunner; i++) {
+        const p = 0.55 + (state.sop/100)*0.25 + (inputs.eSys/100)*0.15 - (state.rpRisk/100)*0.08;
+        if (Math.random() < clamp(p, 0.35, 0.92)) added++;
+      }
+      state.runners += added;
+      state.cash -= added * 1200; // onboarding cost
+      if (added > 0) state.log.push(`• 新增 Runner：+${added}（招募/訓練成本：${money(added*1200)}）`);
+      else state.log.push("• 招募 Runner 失敗（本年 +0）");
     }
 
-    function investBusiness(b, energy, cash) {
-      // quality grows with energy & cash
-      const qGain = Math.floor(0.35 * energy + 0.0006 * cash);
-      b.quality = clamp(b.quality + qGain, 0, 100);
+    // 2) Cash investments (keep buffer 5k)
+    const buffer = 5000;
+    let investTotal = inputs.cReg + inputs.cCre + inputs.cStk;
+    const maxInvest = Math.max(0, state.cash - buffer);
 
-      const oldStage = b.stage;
-      if (b.quality >= 25) b.stage = Math.max(b.stage, 1);
-      if (b.quality >= 55) b.stage = Math.max(b.stage, 2);
-      if (b.quality >= 80) b.stage = Math.max(b.stage, 3);
-
-      let base = ({0:0, 1:25000, 2:70000, 3:140000})[b.stage];
-
-      if (b.name === "Regulated Platform") base = Math.floor(base * 1.25);
-      if (b.name === "Creative IP") base = Math.floor(base * (b.stage <= 1 ? 0.7 : 1.1));
-
-      base += Math.floor((b.quality / 100) * 25000);
-      b.cashflow = base;
-
-      let passiveRatio = ({0:0.0, 1:0.15, 2:0.35, 3:0.55})[b.stage] + (b.quality / 100) * 0.15;
-      passiveRatio = clamp(passiveRatio, 0.0, 0.75);
-      b.passive = Math.floor(b.cashflow * passiveRatio);
-
-      b.risk = clamp(b.risk - Math.floor(qGain * 0.25), 5, 95);
-      b.burnoutLoad = clamp(15 - Math.floor(b.quality / 10), 3, 15);
-
-      return oldStage !== b.stage;
+    if (investTotal > maxInvest) {
+      const scale = maxInvest / Math.max(1, investTotal);
+      inputs.cReg = Math.floor(inputs.cReg * scale);
+      inputs.cCre = Math.floor(inputs.cCre * scale);
+      inputs.cStk = Math.floor(inputs.cStk * scale);
+      investTotal = inputs.cReg + inputs.cCre + inputs.cStk;
+      state.log.push(`• 現金投入超額→自動縮放（保留 $5k buffer）`);
     }
 
-    function impliedSellValue(b) {
-      if (b.cashflow <= 0) return 0;
-      const mult = b.sellMultLow + Math.random() * (b.sellMultHigh - b.sellMultLow);
-      const earnings = Math.floor(b.cashflow * 0.8 + b.passive * 0.2);
-      return Math.floor(mult * earnings);
+    state.cash -= investTotal;
+    state.stocks += inputs.cStk;
+
+    // 3) Improve SOP & Library via energy + cash
+    const sopGain = Math.floor(0.28 * inputs.eSys + 0.18 * inputs.eReg + 0.0007 * inputs.cReg);
+    const libGain = Math.floor(0.30 * inputs.eCre + 0.0007 * inputs.cCre);
+    state.sop = clamp(state.sop + sopGain, 0, 100);
+    state.library = clamp(state.library + libGain, 0, 100);
+
+    // risk trends: SOP reduces risk, chaos increases it
+    state.rpRisk = clamp(state.rpRisk - Math.floor(sopGain * 0.12) + rint(-2, 4), 5, 95);
+    state.ciRisk = clamp(state.ciRisk - Math.floor(libGain * 0.08) + rint(-2, 3), 5, 95);
+
+    upgradeLevels();
+
+    // 4) Compute yearly flows
+    const platform = calcPlatformFlow(inputs);
+    const creative = calcCreativeFlow(inputs);
+
+    state.rpCases = platform.cases;
+    state.rpMgmtRev = platform.mgmtRev;
+    state.rpContRev = platform.contTotal;
+    state.ciActive = creative.active;
+    state.ciPassive = creative.passive;
+
+    // 5) Burnout / health
+    // base load: managing runners + running business
+    const baseBurn = 10 + platform.mgmtLoad + Math.floor((100 - inputs.eSys) * 0.03);
+    // SOP helps reduce chaos
+    const sopRelief = Math.floor((state.sop/100) * 10);
+    const creRelief = Math.floor((state.library/100) * 6);
+
+    state.burnout = clamp(state.burnout + baseBurn - sopRelief - creRelief - 6, 0, 100);
+    if (state.burnout >= 78) state.health = clamp(state.health - 10, 0, 100);
+    else if (state.burnout <= 35) state.health = clamp(state.health + 2, 0, 100);
+
+    // 6) Cash settlement
+    const totals = computeTotals(platform, creative);
+
+    // execution penalty when burnout high
+    let penalty = 1.0 - (state.burnout / 185);
+    penalty = clamp(penalty, 0.55, 1.0);
+
+    const activeEarned = Math.floor(totals.active * penalty);
+    state.cash += activeEarned;
+    state.cash -= state.expenses;
+    state.cash += rint(-6000, 9000);
+
+    state.log.push(`• 主業：Leads=${platform.totalLeads.toFixed(0)}，Cases=${platform.cases}，Close=${pct(platform.closeRate)}，Success=${pct(platform.successRate)}`);
+    state.log.push(`• 管理費：${money(platform.mgmtRev)} /yr；Contingency（你分成）：${money(platform.contTotal)} /yr`);
+    state.log.push(`• 創作：Active=${money(creative.active)} /yr；Passive=${money(creative.passive)} /yr`);
+    state.log.push(`• SOP +${sopGain} → ${state.sop}/100；Library +${libGain} → ${state.library}/100`);
+    state.log.push(`• Burnout=${state.burnout}/100；Health=${state.health}/100`);
+    state.log.push(`• 主動收入（含初始費/管理費/創作）：${money(totals.active)} × 罰則(${pct(penalty-1+1)}) ≈ ${money(activeEarned)}`);
+    state.log.push(`• 被動收入（cont + 授權長尾 + 股票3%）：${money(totals.passive)}`);
+    state.log.push(`• 年末現金：${money(state.cash)}`);
+
+    // 7) Optional equity sale (Year 4+)
+    if (state.year >= 4 && state.sellChoice > 0) {
+      // use (management + initial fee) as "earnings" proxy, exclude contingency volatility
+      const stableEarnings = Math.floor(platform.mgmtRev + platform.initialFeeRev);
+      const implied = impliedSellValuePlatform(Math.max(1, stableEarnings));
+      const proceeds = Math.floor(implied * (state.sellChoice / 100));
+      state.cash += proceeds;
+
+      // selling reduces future platform earnings by proportion (simplified):
+      // reduce SOP effectiveness slightly + reduce management revenue baseline via runner churn
+      state.runners = Math.floor(state.runners * (1 - state.sellChoice / 140)); // mild effect
+      state.sop = clamp(Math.floor(state.sop * (1 - state.sellChoice / 200)), 0, 100);
+
+      state.log.push(`• 【股權出售】賣出 ${state.sellChoice}%：估值約 ${money(implied)} → 套現 ${money(proceeds)}`);
+      state.sellChoice = 0;
     }
 
-    // ---------- Events ----------
-    const EVENTS = [
-      {
-        name: "Partner Retires",
-        desc: "A key partner slows down. Your platform needs redundancy.",
-        apply: (s) => { s.logEvent("Risk +8, Cash -15k, Burnout +6"); s.reg.risk = clamp(s.reg.risk + 8, 5, 95); s.cash -= 15000; s.burnout = clamp(s.burnout + 6, 0, 100); }
-      },
-      {
-        name: "Compliance Audit",
-        desc: "A compliance review happens. If your SOP is strong, you gain trust.",
-        apply: (s) => {
-          const q = (s.reg.quality + s.cre.quality) / 2;
-          if (q >= 60) { s.logEvent("SOP holds: Cash +15k, Burnout -4"); s.cash += 15000; s.burnout = clamp(s.burnout - 4, 0, 100); }
-          else { s.logEvent("Gaps found: Cash -15k, Burnout +6"); s.cash -= 15000; s.burnout = clamp(s.burnout + 6, 0, 100); }
-        }
-      },
-      {
-        name: "Big Referral Wave",
-        desc: "A surge of warm introductions hits your funnel.",
-        apply: (s) => { s.logEvent("Cash +25k, Burnout +5"); s.cash += 25000; s.burnout = clamp(s.burnout + 5, 0, 100); }
-      },
-      {
-        name: "Market Downturn",
-        desc: "Consumers tighten spending. Volume softens temporarily.",
-        apply: (s) => { s.logEvent("Cash -20k, Burnout +3"); s.cash -= 20000; s.burnout = clamp(s.burnout + 3, 0, 100); }
-      },
-      {
-        name: "AI Breakthrough",
-        desc: "Automation tools become cheaper and more capable.",
-        apply: (s) => { s.logEvent("Reg/Cre Quality +10, Burnout -4"); s.reg.quality = clamp(s.reg.quality + 10, 0, 100); s.cre.quality = clamp(s.cre.quality + 10, 0, 100); s.burnout = clamp(s.burnout - 4, 0, 100); }
-      },
-      {
-        name: "Key Runner Leaves",
-        desc: "A top runner stops producing. Slot management matters.",
-        apply: (s) => { s.logEvent("Cash -12k, Burnout +4"); s.cash -= 12000; s.burnout = clamp(s.burnout + 4, 0, 100); }
-      },
-      {
-        name: "Great Hire",
-        desc: "You find someone who runs ops like a machine.",
-        apply: (s) => { s.logEvent("Burnout -8, Risk -6"); s.burnout = clamp(s.burnout - 8, 0, 100); s.reg.risk = clamp(s.reg.risk - 6, 5, 95); s.cre.risk = clamp(s.cre.risk - 6, 5, 95); }
-      },
-      {
-        name: "Unexpected Rule Change",
-        desc: "Rules shift; you must adjust scripts and workflow.",
-        apply: (s) => { s.logEvent("Risk +10, Cash -10k, Burnout +4"); s.reg.risk = clamp(s.reg.risk + 10, 5, 95); s.cash -= 10000; s.burnout = clamp(s.burnout + 4, 0, 100); }
-      },
+    // Lose condition
+    if (state.cash < -25000) {
+      state.playing = false;
+      state.log.push("");
+      state.log.push("!!! 破產：現金跌破 -$25k（提示：保留 buffer、加 SOP、不要過度擴張 Runner）");
+    }
+
+    // Advance year / finish
+    if (state.playing) state.year += 1;
+
+    if (state.year > YEARS) {
+      state.playing = false;
+      const finPlatform = calcPlatformFlow(inputs);
+      const finCreative = calcCreativeFlow(inputs);
+      const finTotals = computeTotals(finPlatform, finCreative);
+
+      state.log.push("");
+      state.log.push("================================================================");
+      state.log.push("遊戲結束 — 第 10 年");
+      state.log.push("================================================================");
+      state.log.push(`現金：${money(state.cash)}`);
+      state.log.push(`股票：${money(state.stocks)}`);
+      state.log.push(`被動收入（yr）：${money(finTotals.passive)}；年支出：${money(state.expenses)}`);
+      state.log.push(`Burnout：${state.burnout}/100；Health：${state.health}/100`);
+
+      if (finTotals.passive >= state.expenses && state.health >= 50) {
+        state.log.push("");
+        state.log.push("🏁 成功退休：被動收入已覆蓋支出，且健康尚可。");
+      } else if (finTotals.passive >= state.expenses) {
+        state.log.push("");
+        state.log.push("✅ 財務上退休，但健康/疲勞要處理（否則退休品質差）。");
+      } else {
+        state.log.push("");
+        state.log.push("⏳ 未退休：你已建立資產，調整策略再玩一局。");
+      }
+    }
+
+    render();
+  }
+
+  function computeDisplayTotals() {
+    // 用當前狀態估算（不含未來輸入），提供 UI 即時顯示
+    const safeWithdraw = Math.floor(state.stocks * 0.03);
+    const passive = state.rpContRev + state.ciPassive + safeWithdraw;
+    // active 以管理費+創作 active（初始費波動大，這裡只展示概略）
+    const active = state.rpMgmtRev + state.ciActive;
+    return { active, passive };
+  }
+
+  function render() {
+    el.yearPill.textContent = `第 ${Math.min(state.year, YEARS)} 年 / ${YEARS} 年`;
+    el.statusPill.textContent = state.playing ? "進行中" : "已結束";
+    el.runnerPill.textContent = `Runner：${state.runners} 人`;
+
+    el.cashV.textContent = money(state.cash);
+    el.expV.textContent = money(state.expenses);
+
+    const totals = computeDisplayTotals();
+    el.activeV.textContent = money(totals.active);
+    el.passiveV.textContent = money(totals.passive);
+
+    el.burnBar.style.width = `${clamp(state.burnout, 0, 100)}%`;
+    el.burnV.textContent = `${state.burnout}/100`;
+    el.healthBar.style.width = `${clamp(state.health, 0, 100)}%`;
+    el.healthV.textContent = `${state.health}/100`;
+
+    el.stocksV.textContent = money(state.stocks);
+    el.stocksR.textContent = `今年回報：${pct(state.lastStockR)}`;
+
+    el.rpMeta.textContent = `等級 ${state.rpLevel} • SOP ${state.sop} • 風險 ${state.rpRisk}`;
+    el.rpCases.textContent = String(state.rpCases);
+    el.rpMgmt.textContent = money(state.rpMgmtRev);
+    el.rpCont.textContent = money(state.rpContRev);
+    el.rpRates.textContent =
+      `（SOP 越高：成交率、成功率上升；風險越低：波動更少；Runner 越多：管理費更穩但更累）`;
+
+    el.ciMeta.textContent = `等級 ${state.ciLevel} • Library ${state.library} • 風險 ${state.ciRisk}`;
+    el.ciCF.textContent = money(state.ciActive);
+    el.ciP.textContent = money(state.ciPassive);
+    el.ciNotes.textContent =
+      `Library（作品庫）越高 → 被動授權比例越高（長尾複利）。`;
+
+    el.eRegLbl.textContent = el.eReg.value;
+    el.eCreLbl.textContent = el.eCre.value;
+    el.eSysLbl.textContent = el.eSys.value;
+
+    // equity sale availability
+    el.sellNote.textContent = (state.year >= 4 && state.playing)
+      ? `已選：${state.sellChoice}%`
+      : "未開放（第 4 年起）";
+
+    el.btnApply.disabled = !state.playing;
+    el.btnNext.disabled = !state.playing;
+
+    el.log.textContent = state.log.slice(-260).join("\n");
+  }
+
+  function reset() {
+    state.year = 1;
+    state.playing = true;
+    state.cash = 50000;
+    state.expenses = 90000;
+    state.burnout = 18;
+    state.health = 85;
+
+    state.stocks = 20000;
+    state.lastStockR = 0;
+
+    state.rpLevel = 0;
+    state.sop = 0;
+    state.rpRisk = 35;
+    state.runners = 0;
+
+    state.ciLevel = 0;
+    state.library = 0;
+    state.ciRisk = 25;
+
+    state.rpCases = 0;
+    state.rpMgmtRev = 0;
+    state.rpContRev = 0;
+    state.ciActive = 0;
+    state.ciPassive = 0;
+
+    state.sellChoice = 0;
+
+    state.log = [
+      "歡迎來到《十年退休》— Runner 平台變體。",
+      "你要做的是：穩定主業現金流 + 累積創作資產 + 降低 Burnout。",
+      "第 4 年後可賣主業股權（10/20/30%）套現。"
     ];
 
-    // ---------- State ----------
-    const state = {
-      year: 1,
-      cash: 50000,
-      expenses: 90000,
-      burnout: 15,
-      health: 85,
-      stocks: 20000,
-      stockMu: 0.08,
-      stockSig: 0.16,
-      lastStockR: 0,
-      reg: makeBusiness("Regulated Platform", { risk: 35, burnoutLoad: 14, sellMultLow: 3.0, sellMultHigh: 6.5 }),
-      cre: makeBusiness("Creative IP", { risk: 25, burnoutLoad: 10, sellMultLow: 2.0, sellMultHigh: 5.0 }),
-      sellChoice: 0,
-      playing: true,
-      logLines: [],
-      logEvent(msg) { this.logLines.push("  • " + msg); },
-      logHeader(title, desc) {
-        this.logLines.push("");
-        this.logLines.push("=== " + title + " ===");
-        this.logLines.push(desc);
-      }
-    };
+    // default inputs
+    el.eReg.value = 55;
+    el.eCre.value = 25;
+    el.eSys.value = 20;
 
-    // ---------- UI refs ----------
-    const $ = (id) => document.getElementById(id);
-    const els = {
-      yearPill: $("yearPill"), statusPill: $("statusPill"),
-      cashV: $("cashV"), expV: $("expV"), activeV: $("activeV"), passiveV: $("passiveV"),
-      burnBar: $("burnBar"), burnV: $("burnV"), healthBar: $("healthBar"), healthV: $("healthV"),
-      stocksV: $("stocksV"), stocksR: $("stocksR"),
-      rpMeta: $("rpMeta"), rpCF: $("rpCF"), rpP: $("rpP"),
-      ciMeta: $("ciMeta"), ciCF: $("ciCF"), ciP: $("ciP"),
-      eReg: $("eReg"), eCre: $("eCre"), eRegLbl: $("eRegLbl"), eCreLbl: $("eCreLbl"),
-      cReg: $("cReg"), cCre: $("cCre"), cStk: $("cStk"),
-      sellNote: $("sellNote"),
-      log: $("log"),
-      btnApply: $("btnApply"), btnNext: $("btnNext"),
-      btnReset: $("btnReset"),
-      guardNote: $("guardNote"),
-      sell0: $("sell0"), sell10: $("sell10"), sell20: $("sell20"), sell30: $("sell30"),
-    };
+    el.cReg.value = 12000;
+    el.cCre.value = 6000;
+    el.cStk.value = 7000;
+    el.addRunner.value = 1;
 
-    function computeTotals() {
-      const active = state.reg.cashflow + state.cre.cashflow;
-      const safeWithdraw = Math.floor(state.stocks * 0.03); // conservative
-      const passive = state.reg.passive + state.cre.passive + safeWithdraw;
-      return { active, passive, safeWithdraw };
+    el.mgmtFee.value = 400;
+    el.spots.value = 10;
+    el.initialFee.value = 1500;
+    el.contShare.value = 0.33;
+
+    render();
+  }
+
+  function setSellChoice(p) {
+    if (state.year < 4 || !state.playing) return;
+    state.sellChoice = p;
+    render();
+  }
+
+  // ---------- Wire ----------
+  el.btnApply.addEventListener("click", advanceYear);
+  el.btnNext.addEventListener("click", advanceYear);
+  el.btnReset.addEventListener("click", reset);
+
+  // keep energy sum to 100 (simple auto)
+  function rebalanceEnergy(changed) {
+    let a = parseInt(el.eReg.value, 10) || 0;
+    let b = parseInt(el.eCre.value, 10) || 0;
+    let c = parseInt(el.eSys.value, 10) || 0;
+
+    // preferred: adjust sys last? We'll enforce by adjusting the one NOT changed.
+    let sum = a + b + c;
+    if (sum === 100) return render();
+
+    if (changed === "reg") {
+      // adjust sys first
+      c = clamp(100 - (a + b), 0, 100);
+      el.eSys.value = String(c);
+    } else if (changed === "cre") {
+      c = clamp(100 - (a + b), 0, 100);
+      el.eSys.value = String(c);
+    } else if (changed === "sys") {
+      // adjust creative
+      b = clamp(100 - (a + c), 0, 100);
+      el.eCre.value = String(b);
     }
 
-    function render() {
-      const { active, passive } = computeTotals();
-
-      els.yearPill.textContent = `Year ${state.year}/${YEARS}`;
-      els.statusPill.textContent = state.playing ? "Playing" : "Finished";
-
-      els.cashV.textContent = fmtMoney(state.cash);
-      els.expV.textContent = fmtMoney(state.expenses);
-      els.activeV.textContent = fmtMoney(active);
-      els.passiveV.textContent = fmtMoney(passive);
-
-      els.burnBar.style.width = `${clamp(state.burnout, 0, 100)}%`;
-      els.burnV.textContent = `${state.burnout}/100`;
-
-      els.healthBar.style.width = `${clamp(state.health, 0, 100)}%`;
-      els.healthV.textContent = `${state.health}/100`;
-
-      els.stocksV.textContent = fmtMoney(state.stocks);
-      els.stocksR.textContent = `Return: ${fmtPct(state.lastStockR)}`;
-
-      els.rpMeta.textContent = `stage ${state.reg.stage} • q ${state.reg.quality} • risk ${state.reg.risk}`;
-      els.rpCF.textContent = fmtMoney(state.reg.cashflow);
-      els.rpP.textContent = fmtMoney(state.reg.passive);
-
-      els.ciMeta.textContent = `stage ${state.cre.stage} • q ${state.cre.quality} • risk ${state.cre.risk}`;
-      els.ciCF.textContent = fmtMoney(state.cre.cashflow);
-      els.ciP.textContent = fmtMoney(state.cre.passive);
-
-      els.eRegLbl.textContent = els.eReg.value;
-      els.eCreLbl.textContent = els.eCre.value;
-
-      // Equity sale availability
-      if (state.year >= 4 && state.playing) els.sellNote.textContent = `Selected: ${state.sellChoice}%`;
-      else els.sellNote.textContent = "Not available yet";
-
-      // Guard rails note
-      els.guardNote.textContent = "";
-
-      // Disable buttons if finished
-      els.btnApply.disabled = !state.playing;
-      els.btnNext.disabled = !state.playing;
-
-      // Log
-      els.log.textContent = state.logLines.slice(-250).join("\n");
+    // final guard
+    a = parseInt(el.eReg.value, 10) || 0;
+    b = parseInt(el.eCre.value, 10) || 0;
+    c = parseInt(el.eSys.value, 10) || 0;
+    sum = a + b + c;
+    if (sum !== 100) {
+      // clamp creative
+      b = clamp(100 - (a + c), 0, 100);
+      el.eCre.value = String(b);
     }
+    render();
+  }
 
-    function applyStockGrowth() {
-      let r = state.stockMu + randNorm() * state.stockSig;
-      r = clamp(r, -0.45, 0.60);
-      state.stocks = Math.floor(state.stocks * (1 + r));
-      state.lastStockR = r;
-      state.logEvent(`Stocks: ${fmtPct(r)} → ${fmtMoney(state.stocks)}`);
-    }
+  el.eReg.addEventListener("input", () => rebalanceEnergy("reg"));
+  el.eCre.addEventListener("input", () => rebalanceEnergy("cre"));
+  el.eSys.addEventListener("input", () => rebalanceEnergy("sys"));
 
-    function maybeEvent() {
-      if (state.year < 2) return;
-      if (Math.random() > 0.75) return; // 75% chance
-      const ev = EVENTS[randInt(0, EVENTS.length - 1)];
-      state.logHeader("EVENT: " + ev.name, ev.desc);
-      ev.apply(state);
-    }
+  el.sell0.addEventListener("click", () => setSellChoice(0));
+  el.sell10.addEventListener("click", () => setSellChoice(10));
+  el.sell20.addEventListener("click", () => setSellChoice(20));
+  el.sell30.addEventListener("click", () => setSellChoice(30));
 
-    function enforceBudgetBuffer(cashInvestTotal) {
-      // Keep $5k buffer
-      const buffer = 5000;
-      const maxInvest = Math.max(0, state.cash - buffer);
-      if (cashInvestTotal > maxInvest) return maxInvest;
-      return cashInvestTotal;
-    }
-
-    function advanceYear() {
-      if (!state.playing) return;
-
-      // --- Read inputs ---
-      let eReg = parseInt(els.eReg.value, 10) || 0;
-      let eCre = parseInt(els.eCre.value, 10) || 0;
-      if (eReg + eCre > 100) {
-        const total = eReg + eCre;
-        eReg = Math.floor(100 * (eReg / total));
-        eCre = 100 - eReg;
-        state.logEvent(`Energy exceeded 100, auto-rebalanced: Reg ${eReg}, Cre ${eCre}`);
-      }
-      const eRest = 100 - (eReg + eCre);
-
-      let cReg = Math.max(0, parseInt(els.cReg.value, 10) || 0);
-      let cCre = Math.max(0, parseInt(els.cCre.value, 10) || 0);
-      let cStk = Math.max(0, parseInt(els.cStk.value, 10) || 0);
-
-      let investTotal = cReg + cCre + cStk;
-      const allowed = enforceBudgetBuffer(investTotal);
-
-      if (investTotal > allowed) {
-        // scale down proportionally (simple)
-        const scale = allowed / investTotal;
-        cReg = Math.floor(cReg * scale);
-        cCre = Math.floor(cCre * scale);
-        cStk = Math.floor(cStk * scale);
-        investTotal = cReg + cCre + cStk;
-        state.logEvent(`Cash invests scaled to keep $5k buffer: Reg ${fmtMoney(cReg)}, Cre ${fmtMoney(cCre)}, Stk ${fmtMoney(cStk)}`);
-      }
-
-      // --- Year header ---
-      state.logLines.push("");
-      state.logLines.push("----------------------------------------------------------------");
-      state.logLines.push(`YEAR ${state.year}`);
-      state.logLines.push("----------------------------------------------------------------");
-
-      // --- Event + Stocks ---
-      maybeEvent();
-      applyStockGrowth();
-
-      // --- Apply investments ---
-      state.cash -= investTotal;
-      state.stocks += cStk;
-
-      const upR = investBusiness(state.reg, eReg, cReg);
-      const upC = investBusiness(state.cre, eCre, cCre);
-      if (upR) state.logEvent(`Regulated leveled up → stage ${state.reg.stage}`);
-      if (upC) state.logEvent(`Creative leveled up → stage ${state.cre.stage}`);
-
-      // --- Burnout / Health dynamics ---
-      let burnoutGain = state.reg.burnoutLoad + state.cre.burnoutLoad;
-      burnoutGain -= Math.floor(0.08 * eRest); // resting helps
-      burnoutGain = Math.max(0, burnoutGain);
-
-      // baseline recovery
-      state.burnout = clamp(state.burnout + burnoutGain - 6, 0, 100);
-
-      if (state.burnout >= 75) state.health = clamp(state.health - 10, 0, 100);
-      else if (state.burnout <= 35) state.health = clamp(state.health + 2, 0, 100);
-
-      // --- Cashflow + expenses ---
-      const { active, passive } = computeTotals();
-      let penalty = 1.0 - (state.burnout / 180);
-      penalty = clamp(penalty, 0.55, 1.0);
-      const earned = Math.floor(active * penalty);
-
-      state.cash += earned;
-      state.cash -= state.expenses;
-      state.cash += randInt(-5000, 8000);
-
-      state.logEvent(`Active earned (after burnout penalty): ${fmtMoney(earned)}; Expenses: ${fmtMoney(state.expenses)}`);
-      state.logEvent(`End cash: ${fmtMoney(state.cash)}; Passive (yr): ${fmtMoney(passive)}`);
-
-      // --- Optional equity sale (Year 4+) ---
-      if (state.year >= 4 && state.sellChoice > 0) {
-        const val = impliedSellValue(state.reg);
-        const proceeds = Math.floor(val * (state.sellChoice / 100));
-        // reduce future cashflows proportionally (simplified)
-        state.reg.cashflow = Math.floor(state.reg.cashflow * (1 - state.sellChoice / 100));
-        state.reg.passive = Math.floor(state.reg.passive * (1 - state.sellChoice / 100));
-        state.cash += proceeds;
-        state.logEvent(`Sold ${state.sellChoice}% Regulated @ implied ${fmtMoney(val)} → proceeds ${fmtMoney(proceeds)}`);
-        state.sellChoice = 0; // reset after sale
-      }
-
-      // --- Lose condition (cash crash) ---
-      if (state.cash < -25000) {
-        state.playing = false;
-        state.status = "Game Over";
-        state.logLines.push("");
-        state.logLines.push("!!! GAME OVER: Cash fell below -$25k. Try keeping a buffer + SOP earlier.");
-      }
-
-      // --- Advance year / end ---
-      if (state.playing) state.year += 1;
-
-      if (state.year > YEARS) {
-        state.playing = false;
-        const end = computeTotals();
-        state.logLines.push("");
-        state.logLines.push("================================================================");
-        state.logLines.push("GAME END — YEAR 10");
-        state.logLines.push("================================================================");
-        state.logLines.push(`Final cash: ${fmtMoney(state.cash)}`);
-        state.logLines.push(`Stocks: ${fmtMoney(state.stocks)}`);
-        state.logLines.push(`Regulated passive (yr): ${fmtMoney(state.reg.passive)} | Creative passive (yr): ${fmtMoney(state.cre.passive)}`);
-        state.logLines.push(`Total passive (yr): ${fmtMoney(end.passive)} | Expenses (yr): ${fmtMoney(state.expenses)}`);
-        state.logLines.push(`Burnout: ${state.burnout}/100 | Health: ${state.health}/100`);
-
-        if (end.passive >= state.expenses && state.health >= 50) {
-          state.logLines.push("");
-          state.logLines.push("🏁 RETIREMENT ACHIEVED: Passive income covers expenses.");
-        } else if (end.passive >= state.expenses) {
-          state.logLines.push("");
-          state.logLines.push("✅ Financially retired, but health/burnout needs attention.");
-        } else {
-          state.logLines.push("");
-          state.logLines.push("⏳ Not retired yet. Iterate strategy and try again.");
-        }
-      }
-
-      render();
-    }
-
-    function resetGame() {
-      state.year = 1;
-      state.cash = 50000;
-      state.expenses = 90000;
-      state.burnout = 15;
-      state.health = 85;
-      state.stocks = 20000;
-      state.lastStockR = 0;
-      state.reg = makeBusiness("Regulated Platform", { risk: 35, burnoutLoad: 14, sellMultLow: 3.0, sellMultHigh: 6.5 });
-      state.cre = makeBusiness("Creative IP", { risk: 25, burnoutLoad: 10, sellMultLow: 2.0, sellMultHigh: 5.0 });
-      state.sellChoice = 0;
-      state.playing = true;
-      state.logLines = [
-        "Welcome to Exit in 10.",
-        "Allocate energy + cash each year. Keep burnout down. Build passive income.",
-        "Tip: SOP/automation is your leverage."
-      ];
-      els.eReg.value = 55;
-      els.eCre.value = 30;
-      els.cReg.value = 15000;
-      els.cCre.value = 8000;
-      els.cStk.value = 7000;
-      render();
-    }
-
-    // --- Equity selection buttons ---
-    function setSellChoice(p) {
-      if (state.year < 4 || !state.playing) return;
-      state.sellChoice = p;
-      render();
-    }
-
-    // --- Wire up ---
-    els.btnApply.addEventListener("click", advanceYear);
-    els.btnNext.addEventListener("click", advanceYear);
-    els.btnReset.addEventListener("click", resetGame);
-
-    els.eReg.addEventListener("input", () => {
-      // keep total <= 100 by auto-adjusting other slider if needed
-      const reg = parseInt(els.eReg.value, 10);
-      let cre = parseInt(els.eCre.value, 10);
-      if (reg + cre > 100) {
-        cre = 100 - reg;
-        els.eCre.value = String(clamp(cre, 0, 100));
-      }
-      render();
-    });
-    els.eCre.addEventListener("input", () => {
-      const cre = parseInt(els.eCre.value, 10);
-      let reg = parseInt(els.eReg.value, 10);
-      if (reg + cre > 100) {
-        reg = 100 - cre;
-        els.eReg.value = String(clamp(reg, 0, 100));
-      }
-      render();
-    });
-
-    els.sell0.addEventListener("click", () => setSellChoice(0));
-    els.sell10.addEventListener("click", () => setSellChoice(10));
-    els.sell20.addEventListener("click", () => setSellChoice(20));
-    els.sell30.addEventListener("click", () => setSellChoice(30));
-
-    // Initial paint
-    resetGame();
-  </script>
+  // init
+  reset();
+</script>
 </body>
 </html>
